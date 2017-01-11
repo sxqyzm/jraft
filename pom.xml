@@ -24,13 +24,12 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.jgroups/jgroups -->
+    <!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
     <dependency>
-      <groupId>org.jgroups</groupId>
-      <artifactId>jgroups</artifactId>
-      <version>4.0.0.Beta3</version>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-all</artifactId>
+      <version>4.1.6.Final</version>
     </dependency>
-
 
 
   </dependencies>
