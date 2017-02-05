@@ -2,13 +2,9 @@ package com.netease.cloudmusic.Server;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -16,42 +12,37 @@ import java.util.Map;
  */
 public class AbstractRaftServer implements RaftServer {
 
-    private Map<String,Channel> serversMap;
+    private int port;
 
-    public void writeMsg(ByteBuf byteBuf) {
+    private Map<String,SocketChannel> serversMap=new HashMap<String, SocketChannel>();
 
+    private NettyServerLoop nettyServerLoop;
+
+    private NettyClientLoop nettyClientLoop;
+
+
+    public AbstractRaftServer(int port){
+        this.port=port;
+        this.nettyServerLoop=new NettyServerLoop(port);
+        this.nettyClientLoop=new NettyClientLoop();
+
+    }
+
+    public void startNode(){
+        nettyServerLoop.startServerLoop();
+        nettyClientLoop.startClientLoop();
+    }
+
+    public int connOtherServers(Map<String, Map<String, String>> servers) {
+        return 0;
+    }
+
+    public void writeMsg(Object obj) {
 
     }
 
-    public void readMsg(ByteBuf byteBuf) {
+    public void readMsg(Byte[] bytes) {
 
     }
 
-    public void start(){
-        EventLoopGroup fatherGroup=new NioEventLoopGroup(1);
-        final EventLoopGroup childGroup=new NioEventLoopGroup();
-        ServerBootstrap bootstrap=new ServerBootstrap();
-        bootstrap.group(fatherGroup,childGroup).channel(NioServerSocketChannel.class);
-        bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
-            protected void initChannel(SocketChannel socketChannel) throws Exception {
-
-            }
-        });
-        bootstrap.option(ChannelOption.SO_BACKLOG,128).option(ChannelOption.SO_KEEPALIVE,true);
-        ChannelFuture channelFuture= null;
-
-        try {
-            channelFuture = bootstrap.bind(22222).sync();
-            Channel serverSocketChannel=channelFuture.channel();
-            System.out.println("Server start");
-            serverSocketChannel.closeFuture().sync();
-        } catch (InterruptedException e) {
-            fatherGroup.shutdownGracefully();
-            childGroup.shutdownGracefully();
-        }finally {
-            fatherGroup.shutdownGracefully();
-            childGroup.shutdownGracefully();
-        }
-
-    }
 }
