@@ -18,5 +18,7 @@ public interface AbstractFollower {
 
     void acceptAppendRpc();
 
+    void redirectClientRpc();
+
 
 }
