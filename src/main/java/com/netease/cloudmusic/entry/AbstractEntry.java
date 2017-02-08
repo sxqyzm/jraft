@@ -10,4 +10,16 @@ public interface AbstractEntry<T> {
 
     T setApplyOrder(T applyOrder);
 
+    long getTerm();
+
+    long getIndex();
+
+    AbstractEntry<T> next();
+
+    AbstractEntry<T> before();
+
+    AbstractEntry<T> setNext(AbstractEntry<T> entry);
+
+    AbstractEntry<T> setBefore(AbstractEntry<T> entry);
+
 }

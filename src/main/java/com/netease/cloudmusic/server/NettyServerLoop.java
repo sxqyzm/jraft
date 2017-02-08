@@ -1,11 +1,10 @@
-package com.netease.cloudmusic.Server;
+package com.netease.cloudmusic.server;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 import java.util.concurrent.locks.Lock;

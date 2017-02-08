@@ -9,9 +9,9 @@ public class RaftEntry<T> implements AbstractEntry<T> {
 
     private final long index;
 
-    RaftEntry<T> next;
+    private AbstractEntry<T> next;
 
-    RaftEntry<T> before;
+    private AbstractEntry<T> before;
 
     T applyOrder;
 
@@ -39,5 +39,23 @@ public class RaftEntry<T> implements AbstractEntry<T> {
 
     public long getIndex() {
         return index;
+    }
+
+    public AbstractEntry<T> next() {
+        return next;
+    }
+
+    public AbstractEntry<T> before() {
+        return before;
+    }
+
+    public AbstractEntry<T> setNext(AbstractEntry<T> entry) {
+        next=entry;
+        return entry;
+    }
+
+    public AbstractEntry<T> setBefore(AbstractEntry<T> entry) {
+        before=entry;
+        return entry;
     }
 }

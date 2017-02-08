@@ -1,4 +1,4 @@
-package com.netease.cloudmusic.Server;
+package com.netease.cloudmusic.server;
 
 import com.netease.cloudmusic.meta.ReqBasicMeta;
 import io.netty.channel.ChannelHandlerContext;

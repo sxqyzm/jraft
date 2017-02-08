@@ -1,6 +1,6 @@
 package com.netease.cloudmusic.jraft;
 
-import com.netease.cloudmusic.Server.AbstractRaftServer;
+import com.netease.cloudmusic.server.AbstractRaftServer;
 import org.junit.Test;
 
 /**

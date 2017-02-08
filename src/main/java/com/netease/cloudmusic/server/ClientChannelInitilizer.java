@@ -1,4 +1,4 @@
-package com.netease.cloudmusic.Server;
+package com.netease.cloudmusic.server;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;

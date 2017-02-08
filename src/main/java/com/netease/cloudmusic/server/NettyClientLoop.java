@@ -1,4 +1,4 @@
-package com.netease.cloudmusic.Server;
+package com.netease.cloudmusic.server;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
