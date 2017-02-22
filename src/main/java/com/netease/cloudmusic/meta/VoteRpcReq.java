@@ -3,7 +3,7 @@ package com.netease.cloudmusic.meta;
 import java.io.Serializable;
 
 /**
- * candidate发送的vote Meta
+ * Invoked by candidates to gather votes
  * Created by hzzhangmeng2 on 2017/2/8.
  */
 public class VoteRpcReq implements Serializable {

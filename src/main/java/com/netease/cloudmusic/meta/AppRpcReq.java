@@ -5,6 +5,7 @@ import com.netease.cloudmusic.entry.AbstractEntry;
 import java.io.Serializable;
 
 /**
+ * Invoked by leader to replicate log entries; also used as heartbeat
  * Created by hzzhangmeng2 on 2017/2/8.
  */
 public class AppRpcReq<T> implements Serializable {

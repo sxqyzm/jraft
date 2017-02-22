@@ -3,6 +3,7 @@ package com.netease.cloudmusic.meta;
 import java.io.Serializable;
 
 /**
+ * response of AppRpcReq
  * Created by hzzhangmeng2 on 2017/2/8.
  */
 public class AppRpcResp implements Serializable {

@@ -1,4 +1,4 @@
-package com.netease.cloudmusic.Protocol;
+package com.netease.cloudmusic.protocol;
 
 /**
  * Created by hzzhangmeng2 on 2017/1/11.

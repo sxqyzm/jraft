@@ -1,6 +1,6 @@
 package com.netease.cloudmusic.timeloop;
 
-import com.netease.cloudmusic.Protocol.RaftProtocol;
+import com.netease.cloudmusic.protocol.RaftProtocol;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
