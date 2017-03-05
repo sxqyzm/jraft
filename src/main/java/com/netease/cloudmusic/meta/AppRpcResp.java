@@ -12,6 +12,11 @@ public class AppRpcResp implements Serializable {
     private long term;
     private boolean success;
 
+    public AppRpcResp(long currentTerm,boolean result){
+        this.term=currentTerm;
+        this.success=result;
+    }
+
     public boolean isSuccess() {
         return success;
     }

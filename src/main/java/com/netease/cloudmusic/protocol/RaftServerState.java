@@ -3,6 +3,8 @@ package com.netease.cloudmusic.protocol;
 import com.netease.cloudmusic.entry.AbstractEntry;
 import com.netease.cloudmusic.entry.AbstractEntryLog;
 import com.netease.cloudmusic.enums.RoleEnum;
+import com.netease.cloudmusic.meta.AppRpcReq;
+import com.netease.cloudmusic.meta.VoteRpcReq;
 
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
@@ -24,29 +26,25 @@ public class RaftServerState<T> {
 
         //RaftServer state
         RoleEnum serverStat;
+        boolean receiveRpc=true;
         long currentTerm;
-        private long voteFor;
+        long voteFor;
         AbstractEntry<T>[] nextIndex;
         AbstractEntry<T>[] matchIndex;
 
-        public long getVoteFor(){
-                try {
-                        voteForLock.lock();
-                        return voteFor;
-                }finally {
-                        voteForLock.unlock();
-                }
+        /**
+         * 处理完vote更新node属性信息
+         * @param voteRpcReq
+         */
+        public void updateAfterVote(VoteRpcReq voteRpcReq){
+                currentTerm=voteRpcReq.getCandidateTerm();
+                voteFor=voteRpcReq.getCandidateId();
+                receiveRpc=true;
         }
 
-        public void setVoteFor(long voteFor){
-                try {
-                        voteForLock.lock();
-                        this.voteFor=voteFor;
-                }finally {
-                        voteForLock.unlock();
-                }
-
-
+        public void updateAfterAppend(AppRpcReq appRpcReq){
+                currentTerm=appRpcReq.getLeaderTerm();
+                receiveRpc=true;
         }
 
 
