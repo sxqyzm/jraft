@@ -40,4 +40,12 @@ public class VoteRpcReq implements Serializable {
     public void setCandidateId(long candidateId) {
         this.candidateId = candidateId;
     }
+
+    public long getCandidateTerm() {
+        return candidateTerm;
+    }
+
+    public void setCandidateTerm(long candidateTerm) {
+        this.candidateTerm = candidateTerm;
+    }
 }

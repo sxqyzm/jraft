@@ -13,6 +13,18 @@ public interface AbstractEntryLog<T> {
     long getLogLen();
 
     /**
+     * 得到已经提交的最后一个状态entry
+     * @return
+     */
+    AbstractEntry<T> getCommitIndex();
+
+    /**
+     * 得到已经被执行的最后一个状态entry
+     * @return
+     */
+    AbstractEntry<T> getApplyIndex();
+
+    /**
      * 根据位置index获取到对应的entry对象
      * @param index
      * @return the entry object
@@ -33,6 +45,4 @@ public interface AbstractEntryLog<T> {
      * @return
      */
     boolean deleteBackEntrys(AbstractEntry<T> entry);
-
-
 }

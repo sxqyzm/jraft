@@ -1,6 +1,5 @@
 package com.netease.cloudmusic.jraft;
 
-import com.netease.cloudmusic.protocol.AbstractRaftProtocol;
 import com.netease.cloudmusic.timeloop.RaftTimer;
 import com.netease.cloudmusic.timeloop.RaftTimerLoop;
 import org.junit.Test;

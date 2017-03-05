@@ -7,4 +7,14 @@ import java.io.Serializable;
  */
 public class ClientRpcReq<T> implements Serializable {
     private static final long serialVersionUID = -7773133850307558296L;
+
+    private T applyOrder;
+
+    public T getApplyOrder() {
+        return applyOrder;
+    }
+
+    public void setApplyOrder(T applyOrder) {
+        this.applyOrder = applyOrder;
+    }
 }

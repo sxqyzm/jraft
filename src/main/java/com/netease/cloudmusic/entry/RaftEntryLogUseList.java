@@ -17,6 +17,8 @@ public class RaftEntryLogUseList<T> implements AbstractEntryLog<T> {
     private AbstractEntry<T> head;
     private AbstractEntry<T> tail;
     private AtomicLong length;
+    private AbstractEntry<T> commitIndex;
+    private AbstractEntry<T> applyIndex;
     private Lock lock=new ReentrantLock();
 
     public RaftEntryLogUseList(){
@@ -29,6 +31,14 @@ public class RaftEntryLogUseList<T> implements AbstractEntryLog<T> {
 
     public long getLogLen() {
         return length.get();
+    }
+
+    public AbstractEntry<T> getCommitIndex() {
+        return commitIndex;
+    }
+
+    public AbstractEntry<T> getApplyIndex() {
+        return null;
     }
 
     public AbstractEntry<T> getEntryByIndex(long index) {
@@ -52,6 +62,7 @@ public class RaftEntryLogUseList<T> implements AbstractEntryLog<T> {
         entry.setNext(tail);
         entry.setBefore(entryIndex);
         length.incrementAndGet();
+            commitIndex=entry;
         }finally {
             lock.unlock();
         }

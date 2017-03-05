@@ -2,10 +2,10 @@ package com.netease.cloudmusic.protocol;
 
 import com.netease.cloudmusic.entry.AbstractEntry;
 import com.netease.cloudmusic.entry.AbstractEntryLog;
+import com.netease.cloudmusic.entry.RaftEntry;
 import com.netease.cloudmusic.entry.RaftEntryLogUseList;
 import com.netease.cloudmusic.meta.*;
 
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -17,16 +17,26 @@ public class SingleNodeServer<T> extends RaftServerState<T> implements AbstractS
 
     private Lock lock=new ReentrantLock();
 
-    public SingleNodeServer(){
-        currentTerm=new AtomicLong(0);
-    }
-
     public ClientRpcResp appendEntry(ClientRpcReq<T> clientRpcReq) {
-        return null;
+        ClientRpcResp resp=new ClientRpcResp();
+        if (entryLog==null){
+            resp.setCode(500);
+            resp.setSucc(false);
+        }else{
+            AbstractEntry<T> entry=new RaftEntry<T>(clientRpcReq.getApplyOrder());
+            if (entryLog.appendEntry(entry)){
+                resp.setCode(200);
+                resp.setSucc(true);
+            }else{
+                resp.setCode(500);
+                resp.setSucc(false);
+            }
+        }
+        return resp;
     }
 
-    public long getCurrentTerm() {
-        return currentTerm.get();
+    public SingleNodeServer(AbstractEntryLog<T> abstractEntryLog){
+        this.entryLog=abstractEntryLog;
     }
 
     public AbstractEntryLog<T> getEntryLog() {
@@ -42,11 +52,11 @@ public class SingleNodeServer<T> extends RaftServerState<T> implements AbstractS
     }
 
     public AbstractEntry<T> getCommitIndex() {
-        return commitIndex;
+        return getEntryLog().getCommitIndex();
     }
 
     public AbstractEntry<T> getApplyId() {
-        return applyIndex;
+        return getEntryLog().getApplyIndex();
     }
 
 }

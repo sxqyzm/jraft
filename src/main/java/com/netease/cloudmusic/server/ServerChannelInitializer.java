@@ -8,6 +8,5 @@ import io.netty.channel.socket.SocketChannel;
  */
 public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
     protected void initChannel(SocketChannel socketChannel) throws Exception {
-
     }
 }

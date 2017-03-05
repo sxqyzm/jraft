@@ -5,9 +5,9 @@ package com.netease.cloudmusic.entry;
  */
 public class RaftEntry<T> implements AbstractEntry<T> {
 
-    private final long term;
+    private  long term;
 
-    private final long index;
+    private  long index;
 
     private AbstractEntry<T> next;
 
@@ -15,13 +15,19 @@ public class RaftEntry<T> implements AbstractEntry<T> {
 
     T applyOrder;
 
-    RaftEntry(long term,long index,T applyOrder,RaftEntry<T> before,RaftEntry<T> next){
+    public RaftEntry(T applyOrder){
+        this(applyOrder,null,null);
+    }
+    public RaftEntry(T applyOrder,RaftEntry<T> before,RaftEntry<T> next){
+        this(0,0,applyOrder,before,next);
+    }
+
+    public RaftEntry(long term,long index,T applyOrder,RaftEntry<T> before,RaftEntry<T> next){
         this.term=term;
         this.index=index;
         this.applyOrder=applyOrder;
         this.before=before;
         this.next=next;
-
     }
 
     public T getApplyOrder() {
@@ -57,5 +63,13 @@ public class RaftEntry<T> implements AbstractEntry<T> {
     public AbstractEntry<T> setBefore(AbstractEntry<T> entry) {
         before=entry;
         return entry;
+    }
+
+    public void setTerm(long term) {
+        this.term = term;
+    }
+
+    public void setIndex(long index) {
+        this.index = index;
     }
 }
