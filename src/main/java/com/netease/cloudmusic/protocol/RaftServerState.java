@@ -16,12 +16,13 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class RaftServerState<T> {
 
-        private Lock voteForLock=new ReentrantLock();
+        public static Lock stateLcok=new ReentrantLock();
 
+        //singleNodeServer state
         long nodeId;
         String nodeHost;
         int nodePort;
-        //singleNodeServer state
+
         AbstractEntryLog<T> entryLog;
 
         //RaftServer state
@@ -32,20 +33,38 @@ public class RaftServerState<T> {
         AbstractEntry<T>[] nextIndex;
         AbstractEntry<T>[] matchIndex;
 
+
         /**
-         * 处理完vote更新node属性信息
+         * follower处理完vote更新node属性信息
          * @param voteRpcReq
          */
         public void updateAfterVote(VoteRpcReq voteRpcReq){
-                currentTerm=voteRpcReq.getCandidateTerm();
-                voteFor=voteRpcReq.getCandidateId();
-                receiveRpc=true;
+                        currentTerm=voteRpcReq.getCandidateTerm();
+                        voteFor=voteRpcReq.getCandidateId();
+                        receiveRpc=true;
         }
 
+
+        /**
+         * follower处理完apeendRpc更新node属性信息
+         * @param appRpcReq
+         */
         public void updateAfterAppend(AppRpcReq appRpcReq){
-                currentTerm=appRpcReq.getLeaderTerm();
-                receiveRpc=true;
+                        currentTerm=appRpcReq.getLeaderTerm();
+                        receiveRpc=true;
         }
+
+        /**
+         * server从其他状态转变成follower，在接收到的rpc消息中的term>currentTerm的情况下
+         * @param newTerm
+         */
+        public void convertToFollower(long newTerm){
+                serverStat=RoleEnum.FOLLOWER;
+                currentTerm=newTerm;
+                voteFor=0;
+        }
+
+
 
 
 }

@@ -1,6 +1,6 @@
 package com.netease.cloudmusic.timeloop;
 
-import com.netease.cloudmusic.protocol.RaftProtocol;
+import com.netease.cloudmusic.protocol.AbstractRaftProtocol;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -10,18 +10,17 @@ import java.util.concurrent.TimeUnit;
  */
 public class RaftTimer implements Runnable {
 
-    private final RaftProtocol raftProtocol;
+    private final AbstractRaftProtocol raftProtocol;
 
     private RaftTimerLoop raftTimerLoop;
 
 
-    public RaftTimer(RaftTimerLoop raftTimerLoop,RaftProtocol raftProtocol){
+    public RaftTimer(RaftTimerLoop raftTimerLoop,AbstractRaftProtocol raftProtocol){
         this.raftTimerLoop=raftTimerLoop;
         this.raftProtocol = raftProtocol;
     }
 
     public void run() {
-        raftProtocol.serverRoleHandle();
         raftTimerLoop.schedule(new RaftTimer(raftTimerLoop, raftProtocol),new Random().nextInt(150)+150, TimeUnit.MILLISECONDS);
     }
 }

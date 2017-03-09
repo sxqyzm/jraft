@@ -16,43 +16,35 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class RaftFollwer<T> extends SingleNodeServer<T> implements AbstractFollower<T> {
 
-    private Lock voteLock=new ReentrantLock();
-    private Lock appendLock=new ReentrantLock();
+    private RaftProtocol raftProtocol;
 
-    public  RaftFollwer(AbstractEntryLog<T> abstractEntryLog){
+    public  RaftFollwer(AbstractEntryLog<T> abstractEntryLog)
+    {
         super(abstractEntryLog);
+        raftProtocol=new RaftProtocol();
     }
 
     @Override
     public VoteRpcResp acceptVoteRpc(VoteRpcReq voteRpcReq) {
-        boolean grantVote=processVote(voteRpcReq);
-        return new VoteRpcResp(currentTerm,grantVote);
-    }
-
-    public boolean processVote(VoteRpcReq voteRpcReq){
         try {
-            voteLock.lock();
-            if (currentTerm<=voteRpcReq.getCandidateTerm()){
-                if (voteFor==0||voteFor==voteRpcReq.getCandidateId()){
-                    AbstractEntry<T> abstractEntry=getCommitIndex();
-                    if (abstractEntry.getTerm()<=voteRpcReq.getLastLogTerm()
-                            &&abstractEntry.getIndex()<=voteRpcReq.getLastLogIndex()){
-                        updateAfterVote(voteRpcReq);
-                        return true;
-                    }
-                }
-            }
-            return false;
+            RaftServerState.stateLcok.lock();
+            boolean grantVote = raftProtocol.processVoteRequest(voteRpcReq,this);
+            return new VoteRpcResp(currentTerm, grantVote);
         }finally {
-            voteLock.unlock();
+            RaftServerState.stateLcok.unlock();
         }
     }
 
     @Override
     public AppRpcResp acceptAppenRpc(AppRpcReq<T> appRpcReq) {
-       boolean grantAppend=false;
-        grantAppend=processApendRpc(appRpcReq);
-        return new AppRpcResp(currentTerm,grantAppend);
+        try {
+            RaftServerState.stateLcok.lock();
+            boolean grantAppend = false;
+            grantAppend = raftProtocol.processAppenRequest(appRpcReq,this);
+            return new AppRpcResp(currentTerm, grantAppend);
+        }finally {
+            RaftServerState.stateLcok.unlock();
+        }
     }
 
     /**
@@ -77,7 +69,7 @@ public class RaftFollwer<T> extends SingleNodeServer<T> implements AbstractFollo
                 if (entryList!=null&&entryList.length>0){
                     int startApeend=0;
                         //遍历跳过已填加的entry或者去除follower存在conflict的entry
-                    if (preEntry.next().next()!=null&&startApeend<entryList.length){
+                    while (preEntry.next().next()!=null&&startApeend<entryList.length){
                         if (preEntry.next().getTerm()!=entryList[startApeend].getTerm()){
                             getEntryLog().deleteBackEntrys(preEntry.next());
                         }else{
