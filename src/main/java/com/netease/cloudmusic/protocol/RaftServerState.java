@@ -6,6 +6,7 @@ import com.netease.cloudmusic.enums.RoleEnum;
 import com.netease.cloudmusic.meta.AppRpcReq;
 import com.netease.cloudmusic.meta.VoteRpcReq;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -25,13 +26,16 @@ public class RaftServerState<T> {
 
         AbstractEntryLog<T> entryLog;
 
-        //RaftServer state
+        //ABstractRaftNet state
         RoleEnum serverStat;
         boolean receiveRpc=true;
         long currentTerm;
         long voteFor;
-        AbstractEntry<T>[] nextIndex;
-        AbstractEntry<T>[] matchIndex;
+        Map<Long,AbstractEntry<T>> nextIndex;
+        Map<Long,AbstractEntry<T>> matchIndex;
+
+        /*candidate一次选举后的获取到投票数目*/
+        int votedNum;
 
 
         /**
@@ -58,13 +62,31 @@ public class RaftServerState<T> {
          * server从其他状态转变成follower，在接收到的rpc消息中的term>currentTerm的情况下
          * @param newTerm
          */
-        public void convertToFollower(long newTerm){
+        public void convertToFollower(long leaderId,long newTerm){
                 serverStat=RoleEnum.FOLLOWER;
                 currentTerm=newTerm;
-                voteFor=0;
+                voteFor=leaderId;
+                receiveRpc=true;
+                votedNum=0;
         }
 
+        /**
+         * server从其他状态转变成candidate
+         */
+        public void convertToCandidate(){
+                serverStat=RoleEnum.CANDIDATE;
+                currentTerm++;
+                voteFor=nodeId;
+                receiveRpc=false;
+                votedNum=0;
+        }
 
+        /**
+         * server转变成leader
+         */
+        public void convertToLeader(){
+                serverStat=RoleEnum.LEADER;
+        }
 
 
 }

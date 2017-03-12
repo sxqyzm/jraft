@@ -5,6 +5,7 @@ import com.netease.cloudmusic.entry.AbstractEntryLog;
 import com.netease.cloudmusic.entry.RaftEntry;
 import com.netease.cloudmusic.entry.RaftEntryLogUseList;
 import com.netease.cloudmusic.meta.*;
+import com.netease.cloudmusic.server.RaftNetWork;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -14,7 +15,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by hzzhangmeng2 on 2017/2/9.
  */
 public class SingleNodeServer<T> extends RaftServerState<T> implements AbstractServer<T> {
-
+    private RaftNetWork raftNetWork;
     private Lock lock=new ReentrantLock();
 
     public ClientRpcResp appendEntry(ClientRpcReq<T> clientRpcReq) {
@@ -35,8 +36,9 @@ public class SingleNodeServer<T> extends RaftServerState<T> implements AbstractS
         return resp;
     }
 
-    public SingleNodeServer(AbstractEntryLog<T> abstractEntryLog){
+    public SingleNodeServer(int port,AbstractEntryLog<T> abstractEntryLog){
         this.entryLog=abstractEntryLog;
+        this.raftNetWork=new RaftNetWork(port);
     }
 
     public AbstractEntryLog<T> getEntryLog() {
@@ -59,4 +61,7 @@ public class SingleNodeServer<T> extends RaftServerState<T> implements AbstractS
         return getEntryLog().getApplyIndex();
     }
 
+    public RaftNetWork getRaftNetWork() {
+        return raftNetWork;
+    }
 }

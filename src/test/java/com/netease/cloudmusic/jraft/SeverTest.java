@@ -1,6 +1,6 @@
 package com.netease.cloudmusic.jraft;
 
-import com.netease.cloudmusic.server.AbstractRaftServer;
+import com.netease.cloudmusic.server.RaftNetWork;
 import org.junit.Test;
 
 /**
@@ -10,7 +10,7 @@ public class SeverTest {
 
     @Test
     public void testServer(){
-        AbstractRaftServer abstractRaftServer=new AbstractRaftServer();
+        RaftNetWork abstractRaftServer=new RaftNetWork();
         abstractRaftServer.start();
     }
 

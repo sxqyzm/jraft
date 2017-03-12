@@ -58,9 +58,10 @@ public class NettyClientLoop {
         SocketChannel channel = null;
         try {
             ChannelFuture future=bootstrap.connect(host,port).sync();
-            channel = (SocketChannel)future.channel();
+            channel = (NioSocketChannel)future.channel();
         } catch (InterruptedException e) {
-            clientLoopGroup.shutdownGracefully();
+            //TODO 打印异常日志
+            return null;
         }
         return channel;
     }

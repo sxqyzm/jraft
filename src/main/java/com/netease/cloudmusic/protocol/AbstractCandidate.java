@@ -1,5 +1,7 @@
 package com.netease.cloudmusic.protocol;
 
+import com.netease.cloudmusic.meta.VoteRpcResp;
+
 /**
  *raft协议中candidate角色行为定义，candidate具有发起选举的行为
  * Created by hzzhangmeng2 on 2017/3/7.
@@ -15,6 +17,6 @@ public interface AbstractCandidate {
      */
     void finishVote();
 
-
+    boolean processVoteResp(VoteRpcResp voteRpcResp);
 
 }
