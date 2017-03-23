@@ -50,7 +50,7 @@ public class RaftNetWork implements ABstractRaftNet {
         }
     }
 
-    /*向其他节点发送信息*/
+    /*向其他节点发送通用信息*/
     public void writeMsg(Object object){
         for (long key:serversMap.keySet()){
             try {
@@ -58,6 +58,16 @@ public class RaftNetWork implements ABstractRaftNet {
             }catch (Exception e){
                 //TODO 向其他节点发送信息时出现异常
             }
+        }
+    }
+
+    /*向指定节点发送信息*/
+    public void writeDIffAppenMsg(long nodeId,Object object){
+        SocketChannel socketChannel=serversMap.get(nodeId);
+        try {
+            socketChannel.write(object);
+        }catch (Exception e){
+            //TODO 向其他节点发送信息时出现异常
         }
     }
 }

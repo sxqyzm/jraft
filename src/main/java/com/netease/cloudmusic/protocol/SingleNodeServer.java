@@ -38,7 +38,7 @@ public class SingleNodeServer<T> extends RaftServerState<T> implements AbstractS
 
     public SingleNodeServer(int port,AbstractEntryLog<T> abstractEntryLog){
         this.entryLog=abstractEntryLog;
-        this.raftNetWork=new RaftNetWork(port);
+        this.raftNetWork=new RaftNetWork(nodeId,port);
     }
 
     public AbstractEntryLog<T> getEntryLog() {

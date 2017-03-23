@@ -1,11 +1,13 @@
 package com.netease.cloudmusic.protocol;
 
 import com.netease.cloudmusic.entry.AbstractEntry;
+import com.netease.cloudmusic.entry.RaftEntry;
 import com.netease.cloudmusic.enums.RoleEnum;
-import com.netease.cloudmusic.meta.AppRpcReq;
-import com.netease.cloudmusic.meta.VoteRpcReq;
-import com.netease.cloudmusic.meta.VoteRpcResp;
+import com.netease.cloudmusic.meta.*;
 import com.netease.cloudmusic.server.RaftNetWork;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by hzzhangmeng2 on 2017/3/9.
@@ -21,6 +23,7 @@ public class RaftProtocol implements AbstractRaftProtocol {
         raftNetWork.writeMsg(voteRpcReq);
         return true;
     }
+
     /**
      * 节点处理candidate发来的voteRpc请求
      * @param voteRpcReq
@@ -70,6 +73,23 @@ public class RaftProtocol implements AbstractRaftProtocol {
             return false;
     }
 
+    /**
+     * 节点处理客户端发来的clientAppen请求
+     * @param clientRpcReq
+     * @param raftLeader
+     * @return
+     */
+    public static boolean processClientAppenRequest(ClientRpcReq clientRpcReq, RaftLeader raftLeader){
+        if (raftLeader.serverStat==RoleEnum.LEADER){
+           return processClientAppen_leader(clientRpcReq,raftLeader);
+
+        }else if (raftLeader.serverStat==RoleEnum.LEADER||raftLeader.serverStat==RoleEnum.CANDIDATE) {
+            return processClientAppen_other(clientRpcReq,raftLeader);
+        }
+        return false;
+    }
+
+    /*具体实现*/
     private static boolean processVoteReq_follower(VoteRpcReq voteRpcReq,RaftServerState raftServerState){
         if (raftServerState.currentTerm<=voteRpcReq.getCandidateTerm()){
             if (raftServerState.voteFor==0||raftServerState.voteFor==voteRpcReq.getCandidateId()){
@@ -141,5 +161,40 @@ public class RaftProtocol implements AbstractRaftProtocol {
         }
         return false;
     }
+
+    private static boolean processClientAppen_leader(ClientRpcReq clientRpcReq,RaftLeader raftLeader){
+        AbstractEntry newEntry=new RaftEntry(clientRpcReq.getApplyOrder());
+        for (long nodeId:RaftSystemState.nodeIds){
+            AbstractEntry preEntry= (AbstractEntry) raftLeader.nextIndex.get(nodeId);
+            if (preEntry==null){
+                preEntry=raftLeader.getEntryLog().getEntryByIndex(0);
+                raftLeader.nextIndex.put(nodeId,preEntry);
+            }
+            AppRpcReq appRpcReq=new AppRpcReq();
+            appRpcReq.setLeaderId(raftLeader.nodeId);
+            appRpcReq.setLeaderCommit(raftLeader.getCommitIndex().getIndex());
+            appRpcReq.setLeaderTerm(raftLeader.currentTerm);
+            appRpcReq.setPrevLogIndex(preEntry.getIndex());
+            appRpcReq.setPrevLogTerm(preEntry.getTerm());
+            List<AbstractEntry> abstractEntries=new ArrayList<AbstractEntry>();
+            while (preEntry.next().next()!=null){
+                abstractEntries.add(preEntry.next());
+            }
+            appRpcReq.setAppendEntrys((AbstractEntry[]) abstractEntries.toArray());
+            raftLeader.getRaftNetWork().writeDIffAppenMsg(nodeId,appRpcReq);
+        }
+        return true;
+    }
+
+    private static boolean processClientAppen_other(ClientRpcReq clientRpcReq,RaftLeader raftLeader){
+        if (raftLeader.serverStat==RoleEnum.FOLLOWER){
+            raftLeader.getRaftNetWork().writeDIffAppenMsg(raftLeader.voteFor,clientRpcReq);
+            return true;
+        }
+        else{
+           return false;
+        }
+    }
+
 
 }

@@ -14,7 +14,6 @@ public class RaftCandidate<T> extends RaftFollwer<T> implements AbstractCandidat
         super(port,abstractEntryLog);
     }
 
-    @Override
     public void startVote() {
         VoteRpcReq voteRpcReq;
         try {
@@ -31,12 +30,10 @@ public class RaftCandidate<T> extends RaftFollwer<T> implements AbstractCandidat
         }
     }
 
-    @Override
     public void finishVote() {
 
     }
 
-    @Override
     public boolean processVoteResp(VoteRpcResp voteRpcResp) {
         try {
             RaftServerState.stateLcok.lock();

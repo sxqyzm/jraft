@@ -9,10 +9,12 @@ import java.io.Serializable;
 public class AppRpcResp implements Serializable {
     private static final long serialVersionUID = -7993580987559255563L;
 
+    private long nodeId;
     private long term;
     private boolean success;
 
-    public AppRpcResp(long currentTerm,boolean result){
+    public AppRpcResp(long nodeId,long currentTerm,boolean result){
+        this.nodeId=nodeId;
         this.term=currentTerm;
         this.success=result;
     }
@@ -31,5 +33,13 @@ public class AppRpcResp implements Serializable {
 
     public void setTerm(long term) {
         this.term = term;
+    }
+
+    public long getNodeId() {
+        return nodeId;
+    }
+
+    public void setNodeId(long nodeId) {
+        this.nodeId = nodeId;
     }
 }

@@ -1,6 +1,7 @@
 package com.netease.cloudmusic.protocol;
 
 import com.netease.cloudmusic.meta.AppRpcReq;
+import com.netease.cloudmusic.meta.AppRpcResp;
 import com.netease.cloudmusic.meta.ClientRpcReq;
 
 /**
@@ -21,4 +22,9 @@ public interface AbstractLeader {
      * @return
      */
     boolean doHeartBeat();
+
+
+
+    boolean processAppenResp(AppRpcResp appRpcResp);
+
 }

@@ -6,6 +6,7 @@ import com.netease.cloudmusic.enums.RoleEnum;
 import com.netease.cloudmusic.meta.AppRpcReq;
 import com.netease.cloudmusic.meta.VoteRpcReq;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
@@ -26,13 +27,13 @@ public class RaftServerState<T> {
 
         AbstractEntryLog<T> entryLog;
 
-        //ABstractRaftNet state
+        //AbstractRaftNet state
         RoleEnum serverStat;
         boolean receiveRpc=true;
         long currentTerm;
         long voteFor;
-        Map<Long,AbstractEntry<T>> nextIndex;
-        Map<Long,AbstractEntry<T>> matchIndex;
+        Map<Long,AbstractEntry> nextIndex=new HashMap<Long, AbstractEntry>();
+        Map<Long,AbstractEntry> matchIndex=new HashMap<Long, AbstractEntry>();
 
         /*candidate一次选举后的获取到投票数目*/
         int votedNum;

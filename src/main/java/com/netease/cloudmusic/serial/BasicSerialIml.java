@@ -16,7 +16,6 @@ public class BasicSerialIml {
             oo=new ObjectOutputStream(bo);
             oo.writeObject(object);
             b=bo.toByteArray();
-            System.out.println(b==null);
         }catch (IOException e) {
         	e.printStackTrace();
                 oo.close();
@@ -39,6 +38,5 @@ public class BasicSerialIml {
             oi.close();
         }
         return  object;
-
     }
 }

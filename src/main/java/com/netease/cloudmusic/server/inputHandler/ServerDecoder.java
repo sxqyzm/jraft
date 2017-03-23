@@ -1,4 +1,4 @@
-package com.netease.cloudmusic.server;
+package com.netease.cloudmusic.server.inputHandler;
 
 import com.netease.cloudmusic.serial.BasicSerialIml;
 import io.netty.buffer.ByteBuf;
@@ -8,6 +8,7 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import java.util.List;
 
 /**
+ * 输入流第一个handler，接收bytebuf，将字节数组反序列化成对象
  * Created by hzzhangmeng2 on 2017/1/16.
  */
 public class ServerDecoder extends ByteToMessageDecoder {
