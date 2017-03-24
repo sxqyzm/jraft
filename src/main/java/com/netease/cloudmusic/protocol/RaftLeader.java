@@ -17,7 +17,7 @@ public class RaftLeader<T> extends RaftCandidate<T> implements AbstractLeader {
 
     public boolean proceeClientReq(ClientRpcReq clientRpcReq) {
         if (clientRpcReq==null&&clientRpcReq.getApplyOrder()==null)return false;
-        AbstractEntry newEntry=new RaftEntry(clientRpcReq.getApplyOrder());
+        AbstractEntry newEntry=new RaftEntry(clientRpcReq.getApplyOrder(),getEntryLog());
         return RaftProtocol.processClientAppenRequest(clientRpcReq,this);
     }
 
@@ -34,7 +34,7 @@ public class RaftLeader<T> extends RaftCandidate<T> implements AbstractLeader {
     }
 
     public boolean processAppenResp(AppRpcResp appRpcResp) {
-        return false;
+        return RaftProtocol.processAppenResp(appRpcResp,this);
     }
 
 

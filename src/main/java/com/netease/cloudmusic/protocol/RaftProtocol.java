@@ -70,8 +70,24 @@ public class RaftProtocol implements AbstractRaftProtocol {
         }else if (raftServerState.serverStat==RoleEnum.LEADER||raftServerState.serverStat==RoleEnum.CANDIDATE){
             return processAppenReq_other(appRpcReq, raftServerState);
         }
-            return false;
+            return true;
     }
+
+    /**
+     * 处理其他节点发回的AppendRpc响应信息
+     * @param appRpcResp
+     * @param raftServerState
+     * @return
+     */
+    public static boolean processAppenResp(AppRpcResp appRpcResp,RaftLeader raftLeader){
+        if (raftLeader.serverStat==RoleEnum.LEADER){
+            return processAppendResp_leader(appRpcResp,raftLeader);
+            } else if (raftLeader.serverStat==RoleEnum.FOLLOWER||raftLeader.serverStat==RoleEnum.CANDIDATE){
+            return processAppendResp_other(appRpcResp,raftLeader);
+        }
+        return true;
+    }
+
 
     /**
      * 节点处理客户端发来的clientAppen请求
@@ -88,6 +104,37 @@ public class RaftProtocol implements AbstractRaftProtocol {
         }
         return false;
     }
+
+    /**
+     * 节点发起选举请求
+     * @param raftCandidate
+     * @return
+     */
+    public static boolean startVote(RaftCandidate raftCandidate){
+        if (raftCandidate.serverStat==RoleEnum.CANDIDATE){
+            raftCandidate.startVote();
+        }else{
+            return false;
+        }
+        return true;
+    }
+
+
+    public static boolean doRaftTimeLoop(RaftServerContext raftServerContext){
+        if (raftServerContext.getRaftServer().serverStat==RoleEnum.FOLLOWER){
+            RaftFollwer raftFollwer=raftServerContext.getRaftServer();
+            if (raftFollwer.receiveRpc==true){
+                //收到过leader的heartbeat，重置recieveRpc
+                raftFollwer.receiveRpc=false;
+            }else{
+                //没有，则转换成candidate，并发起选举
+                raftFollwer.convertToCandidate();
+                startVote(raftServerContext.getRaftServer());
+            }
+        }
+        return true;
+    }
+
 
     /*具体实现*/
     private static boolean processVoteReq_follower(VoteRpcReq voteRpcReq,RaftServerState raftServerState){
@@ -163,7 +210,7 @@ public class RaftProtocol implements AbstractRaftProtocol {
     }
 
     private static boolean processClientAppen_leader(ClientRpcReq clientRpcReq,RaftLeader raftLeader){
-        AbstractEntry newEntry=new RaftEntry(clientRpcReq.getApplyOrder());
+        AbstractEntry newEntry=new RaftEntry(clientRpcReq.getApplyOrder(),raftLeader.getEntryLog());
         for (long nodeId:RaftSystemState.nodeIds){
             AbstractEntry preEntry= (AbstractEntry) raftLeader.nextIndex.get(nodeId);
             if (preEntry==null){
@@ -195,6 +242,36 @@ public class RaftProtocol implements AbstractRaftProtocol {
            return false;
         }
     }
+
+    private static boolean processAppendResp_leader(AppRpcResp appRpcResp,RaftLeader raftLeader) {
+        if (!appRpcResp.isSuccess()) {
+            if (appRpcResp.getTerm() > raftLeader.currentTerm) {
+                raftLeader.convertToFollower(appRpcResp.getNodeId(), appRpcResp.getTerm());
+            } else {
+                AppRpcReq appRpcReq=new AppRpcReq();
+                AbstractEntry oldStartEntry=(AbstractEntry) raftLeader.nextIndex.get(appRpcResp.getNodeId());
+                AbstractEntry newStartEntry=oldStartEntry.before();
+                AbstractEntry beforeEntry=newStartEntry.before();
+                appRpcReq.setPrevLogIndex(beforeEntry.getIndex());
+                appRpcReq.setPrevLogTerm(beforeEntry.getTerm());
+                appRpcReq.setLeaderId(raftLeader.nodeId);
+                appRpcReq.setLeaderCommit(raftLeader.entryLog.getCommitIndex().getIndex());
+                appRpcReq.setLeaderTerm(raftLeader.currentTerm);
+                appRpcReq.setAppendEntrys(raftLeader.entryLog.getFromIndex(newStartEntry));
+                raftLeader.getRaftNetWork().writeDIffAppenMsg(appRpcResp.getNodeId(),appRpcReq);
+            }
+        }else{
+            //TODO 接到append成功响应后处理
+        }
+        return true;
+    }
+
+
+    private static boolean processAppendResp_other(AppRpcResp appRpcResp,RaftLeader raftLeader){
+        return true;
+    }
+
+
 
 
 }

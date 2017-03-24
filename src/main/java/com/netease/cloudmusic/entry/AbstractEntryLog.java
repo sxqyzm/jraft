@@ -45,4 +45,7 @@ public interface AbstractEntryLog<T> {
      * @return
      */
     boolean deleteBackEntrys(AbstractEntry<T> entry);
+
+    AbstractEntry[] getFromIndex(AbstractEntry entry);
+
 }

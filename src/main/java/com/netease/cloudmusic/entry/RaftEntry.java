@@ -15,19 +15,31 @@ public class RaftEntry<T> implements AbstractEntry<T> {
 
     T applyOrder;
 
-    public RaftEntry(T applyOrder){
-        this(applyOrder,null,null);
+    private AbstractEntryLog<T> entryLog;
+
+    public RaftEntry(T applyOrder,AbstractEntryLog<T> abstractEntryLog){
+        this(applyOrder,null,null,abstractEntryLog);
     }
-    public RaftEntry(T applyOrder,RaftEntry<T> before,RaftEntry<T> next){
-        this(0,0,applyOrder,before,next);
+    public RaftEntry(T applyOrder,RaftEntry<T> before,RaftEntry<T> next,AbstractEntryLog<T> abstractEntryLog){
+        this(0,0,applyOrder,before,next,abstractEntryLog);
     }
 
-    public RaftEntry(long term,long index,T applyOrder,RaftEntry<T> before,RaftEntry<T> next){
+    public RaftEntry(long term,long index,T applyOrder,RaftEntry<T> before,RaftEntry<T> next,AbstractEntryLog<T> abstractEntryLog){
         this.term=term;
         this.index=index;
         this.applyOrder=applyOrder;
         this.before=before;
         this.next=next;
+        setEntryLog(abstractEntryLog);
+    }
+
+    public AbstractEntryLog<T> getEntryLog() {
+        return entryLog;
+    }
+
+    public AbstractEntryLog<T> setEntryLog(AbstractEntryLog<T> abstractEntryLog) {
+        this.entryLog=abstractEntryLog;
+        return abstractEntryLog;
     }
 
     public T getApplyOrder() {

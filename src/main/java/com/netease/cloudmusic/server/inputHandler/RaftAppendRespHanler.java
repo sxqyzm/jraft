@@ -19,6 +19,7 @@ public class RaftAppendRespHanler extends SimpleChannelInboundHandler<AppRpcResp
 
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, AppRpcResp appRpcResp) throws Exception {
         raftServerContext.getRaftServer().processAppenResp(appRpcResp);
+
         //TODO,处理完append响应后后续操作
     }
 }

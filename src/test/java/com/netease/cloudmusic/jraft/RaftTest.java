@@ -1,5 +1,8 @@
 package com.netease.cloudmusic.jraft;
 
+import com.netease.cloudmusic.entry.RaftEntryLogUseList;
+import com.netease.cloudmusic.protocol.RaftLeader;
+import com.netease.cloudmusic.protocol.RaftServerContext;
 import com.netease.cloudmusic.timeloop.RaftTimer;
 import com.netease.cloudmusic.timeloop.RaftTimerLoop;
 import org.junit.Test;
@@ -12,14 +15,15 @@ public class RaftTest {
 
     @Test
     public void loopTest(){
-        RaftTimerLoop timeLoop=new RaftTimerLoop();
-        RaftTimer raftTimer=new RaftTimer(timeLoop,new AbstractRaftProtocol());
+        RaftLeader raftLeader=new RaftLeader(22222,new RaftEntryLogUseList());
+        RaftServerContext raftServerContext=new RaftServerContext();
+        raftServerContext.setRaftServer(raftLeader);
+        RaftTimerLoop timeLoop=new RaftTimerLoop(raftServerContext);
+        RaftTimer raftTimer=new RaftTimer(timeLoop);
         timeLoop.init(raftTimer);
         System.out.println("add"+System.currentTimeMillis());
         while (true){
 
         }
     }
-
-
 }

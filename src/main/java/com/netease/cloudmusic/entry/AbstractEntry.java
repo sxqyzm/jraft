@@ -6,6 +6,10 @@ package com.netease.cloudmusic.entry;
  */
 public interface AbstractEntry<T> {
 
+    AbstractEntryLog<T> getEntryLog();
+
+    AbstractEntryLog<T> setEntryLog(AbstractEntryLog<T> abstractEntryLog);
+
     T getApplyOrder();
 
     T setApplyOrder(T applyOrder);

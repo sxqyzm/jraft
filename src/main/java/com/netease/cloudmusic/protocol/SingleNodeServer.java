@@ -24,7 +24,7 @@ public class SingleNodeServer<T> extends RaftServerState<T> implements AbstractS
             resp.setCode(500);
             resp.setSucc(false);
         }else{
-            AbstractEntry<T> entry=new RaftEntry<T>(clientRpcReq.getApplyOrder());
+            AbstractEntry<T> entry=new RaftEntry<T>(clientRpcReq.getApplyOrder(),getEntryLog());
             if (entryLog.appendEntry(entry)){
                 resp.setCode(200);
                 resp.setSucc(true);

@@ -20,6 +20,5 @@ public class RaftClientReqHandler extends SimpleChannelInboundHandler<ClientRpcR
 
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, ClientRpcReq clientRpcReq) throws Exception {
             raftServerContext.getRaftServer().proceeClientReq(clientRpcReq);
-
     }
 }

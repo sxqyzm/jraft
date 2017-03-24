@@ -1,5 +1,6 @@
 package com.netease.cloudmusic.timeloop;
 
+import com.netease.cloudmusic.protocol.RaftServerContext;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.EventExecutorGroup;
@@ -10,7 +11,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
- * raft协议中的定时器实现，基于netty的EventExecutor，简单粗暴
+ * raft协议中的定时器实现，基于netty的EventExecutor
  * Created by hzzhangmeng2 on 2017/1/11.
  */
 public  class RaftTimerLoop extends SingleThreadEventExecutor {
@@ -18,8 +19,11 @@ public  class RaftTimerLoop extends SingleThreadEventExecutor {
     //定时器停止开关
     private volatile boolean closed=false;
 
-    public RaftTimerLoop() {
+    private RaftServerContext raftServerContext;
+
+    public RaftTimerLoop(RaftServerContext raftServerContext) {
         super(new DefaultEventExecutorGroup(1), new DefaultThreadFactory("timerloop"), true);
+        this.raftServerContext=raftServerContext;
     }
     public RaftTimerLoop(EventExecutorGroup parent, ThreadFactory threadFactory, boolean addTaskWakesUp){
         super(parent,threadFactory,addTaskWakesUp);
@@ -39,4 +43,11 @@ public  class RaftTimerLoop extends SingleThreadEventExecutor {
         }
     }
 
+    public RaftServerContext getRaftServerContext() {
+        return raftServerContext;
+    }
+
+    public void setRaftServerContext(RaftServerContext raftServerContext) {
+        this.raftServerContext = raftServerContext;
+    }
 }

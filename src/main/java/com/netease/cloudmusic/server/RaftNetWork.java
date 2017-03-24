@@ -26,7 +26,7 @@ public class RaftNetWork implements ABstractRaftNet {
         this.port=port;
         this.nettyServerLoop=new NettyServerLoop(port);
         this.nettyClientLoop=new NettyClientLoop();
-        startNode(currentNodeId);
+        //startNode(currentNodeId);
 
     }
 

@@ -8,10 +8,7 @@ import org.junit.Test;
  */
 public class SeverTest {
 
-    @Test
     public void testServer(){
-        RaftNetWork abstractRaftServer=new RaftNetWork();
-        abstractRaftServer.start();
     }
 
 }

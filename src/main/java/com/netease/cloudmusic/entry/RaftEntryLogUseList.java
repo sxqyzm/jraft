@@ -1,5 +1,6 @@
 package com.netease.cloudmusic.entry;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
@@ -22,8 +23,8 @@ public class RaftEntryLogUseList<T> implements AbstractEntryLog<T> {
     private Lock lock=new ReentrantLock();
 
     public RaftEntryLogUseList(){
-        head=new RaftEntry<T>(0,0,null,null,null);
-        tail=new RaftEntry<T>(0,0,null,null,null);
+        head=new RaftEntry<T>(0,0,null,null,null,this);
+        tail=new RaftEntry<T>(0,0,null,null,null,this);
         head.setNext(tail);
         tail.setBefore(head);
         length=new AtomicLong(0);
@@ -79,5 +80,15 @@ public class RaftEntryLogUseList<T> implements AbstractEntryLog<T> {
             lock.unlock();
         }
         return true;
+    }
+
+    public AbstractEntry[] getFromIndex(AbstractEntry entry) {
+        if (entry.getEntryLog()!=this)return null;
+        List<AbstractEntry> entryList=new ArrayList<AbstractEntry>();
+        while(entry.next().next()!=null){
+            entryList.add(entry.next());
+            entry=entry.next();
+        }
+        return (AbstractEntry[]) entryList.toArray();
     }
 }
