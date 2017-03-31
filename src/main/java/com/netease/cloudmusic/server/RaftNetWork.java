@@ -1,6 +1,8 @@
 package com.netease.cloudmusic.server;
 
+import com.netease.cloudmusic.exception.RaftException;
 import com.netease.cloudmusic.protocol.RaftSystemState;
+import com.netease.cloudmusic.server.bootstrap.HostAndPort;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
@@ -22,15 +24,16 @@ public class RaftNetWork implements ABstractRaftNet {
 
     private volatile boolean started;
 
-    public RaftNetWork(long currentNodeId,int port){
-        this.port=port;
+
+    public void startNode(){
+        long currentNodeId=RaftSystemState.currentNodeId;
+        HostAndPort hostAndPort=RaftSystemState.getNodeHosts().get(currentNodeId);
+        if (hostAndPort==null){
+            throw new RaftException("start node fail:invalid currentNodeId");
+        }
+        this.port=hostAndPort.getPort();
         this.nettyServerLoop=new NettyServerLoop(port);
         this.nettyClientLoop=new NettyClientLoop();
-        //startNode(currentNodeId);
-
-    }
-
-    private void startNode(long currentNodeId){
         nettyServerLoop.startServerLoop();
         nettyClientLoop.startClientLoop();
         connOtherServers(currentNodeId);
@@ -38,11 +41,10 @@ public class RaftNetWork implements ABstractRaftNet {
 
     /*建立和其他节点的连接*/
     public void connOtherServers(long currentNodeId) {
-        for (long nodeId:RaftSystemState.nodeIds){
+        for (long nodeId:RaftSystemState.getNodeIds()){
             if (nodeId!=currentNodeId){
-                String nodeIp=RaftSystemState.nodeIps.get(nodeId);
-                int nodePort=RaftSystemState.nodePorts.get(nodeId);
-                SocketChannel socketChannel=nettyClientLoop.connServer(nodeIp,nodePort);
+                HostAndPort hostAndPort=RaftSystemState.getNodeHosts().get(nodeId);
+                SocketChannel socketChannel=nettyClientLoop.connServer(hostAndPort.getHost(),hostAndPort.getPort());
                 if (socketChannel!=null) {
                     serversMap.put(nodeId, socketChannel);
                 }

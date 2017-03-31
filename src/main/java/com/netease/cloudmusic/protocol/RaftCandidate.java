@@ -10,8 +10,8 @@ import com.netease.cloudmusic.meta.VoteRpcResp;
  */
 public class RaftCandidate<T> extends RaftFollwer<T> implements AbstractCandidate {
 
-    public RaftCandidate(int port,AbstractEntryLog<T> abstractEntryLog){
-        super(port,abstractEntryLog);
+    public RaftCandidate(AbstractEntryLog<T> abstractEntryLog){
+        super(abstractEntryLog);
     }
 
     public void startVote() {

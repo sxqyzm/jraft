@@ -1,13 +1,11 @@
 package com.netease.cloudmusic.protocol;
 
-import com.netease.cloudmusic.server.RaftNetWork;
 
 /**
  * Created by hzzhangmeng2 on 2017/3/23.
  */
 public class RaftServerContext {
     private RaftLeader raftServer;
-    private RaftNetWork raftNetWork;
 
 
     public RaftLeader getRaftServer() {
@@ -18,11 +16,8 @@ public class RaftServerContext {
         this.raftServer = raftServer;
     }
 
-    public RaftNetWork getRaftNetWork() {
-        return raftNetWork;
+    public void start(){
+
     }
 
-    public void setRaftNetWork(RaftNetWork raftNetWork) {
-        this.raftNetWork = raftNetWork;
-    }
 }

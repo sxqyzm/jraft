@@ -18,9 +18,9 @@ public class RaftFollwer<T> extends SingleNodeServer<T> implements AbstractFollo
 
     private RaftProtocol raftProtocol;
 
-    public  RaftFollwer(int port,AbstractEntryLog<T> abstractEntryLog)
+    public  RaftFollwer(AbstractEntryLog<T> abstractEntryLog)
     {
-        super(port,abstractEntryLog);
+        super(abstractEntryLog);
         raftProtocol=new RaftProtocol();
     }
 

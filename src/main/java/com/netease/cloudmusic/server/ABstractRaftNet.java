@@ -20,4 +20,10 @@ public interface ABstractRaftNet {
      */
     void writeMsg(Object obj);
 
+
+    /**
+     * 构建网络模型
+     */
+    void startNode();
+
 }

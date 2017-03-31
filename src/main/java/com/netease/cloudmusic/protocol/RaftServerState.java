@@ -5,6 +5,7 @@ import com.netease.cloudmusic.entry.AbstractEntryLog;
 import com.netease.cloudmusic.enums.RoleEnum;
 import com.netease.cloudmusic.meta.AppRpcReq;
 import com.netease.cloudmusic.meta.VoteRpcReq;
+import com.netease.cloudmusic.server.bootstrap.HostAndPort;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +23,7 @@ public class RaftServerState<T> {
 
         //singleNodeServer state
         long nodeId;
-        String nodeHost;
-        int nodePort;
+        HostAndPort hostAndPort;
 
         AbstractEntryLog<T> entryLog;
 
@@ -37,6 +37,22 @@ public class RaftServerState<T> {
 
         /*candidate一次选举后的获取到投票数目*/
         int votedNum;
+
+
+        public void init(){
+                nodeId=RaftSystemState.currentNodeId;
+                hostAndPort=RaftSystemState.getNodeHosts().get(nodeId);
+                serverStat=RoleEnum.FOLLOWER;
+                currentTerm=0;
+                voteFor=0;
+                votedNum=0;
+                for (Long id:RaftSystemState.nodeIds){
+                        if (id!=nodeId) {
+                                nextIndex.put(nodeId,entryLog.getEntryByIndex(0));
+                                matchIndex.put(nodeId,entryLog.getEntryByIndex(0));
+                        }
+                }
+        }
 
 
         /**
