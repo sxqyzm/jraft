@@ -1,6 +1,10 @@
 package com.netease.cloudmusic.server;
 
+import com.netease.cloudmusic.enums.RoleEnum;
 import com.netease.cloudmusic.exception.RaftException;
+import com.netease.cloudmusic.meta.InitFollwerReq;
+import com.netease.cloudmusic.protocol.RaftLeader;
+import com.netease.cloudmusic.protocol.RaftServerContext;
 import com.netease.cloudmusic.protocol.RaftSystemState;
 import com.netease.cloudmusic.server.bootstrap.HostAndPort;
 import io.netty.channel.socket.SocketChannel;
@@ -24,8 +28,7 @@ public class RaftNetWork implements ABstractRaftNet {
 
     private volatile boolean started;
 
-
-    public void startNode(){
+    public void startNode(RaftServerContext raftServerContext,RoleEnum roleEnum){
         long currentNodeId=RaftSystemState.currentNodeId;
         HostAndPort hostAndPort=RaftSystemState.getNodeHosts().get(currentNodeId);
         if (hostAndPort==null){
@@ -33,10 +36,14 @@ public class RaftNetWork implements ABstractRaftNet {
         }
         this.port=hostAndPort.getPort();
         this.nettyServerLoop=new NettyServerLoop(port);
+        nettyServerLoop.startServerLoop(raftServerContext);
+
+    }
+
+    public void initConnNodes(){
         this.nettyClientLoop=new NettyClientLoop();
-        nettyServerLoop.startServerLoop();
         nettyClientLoop.startClientLoop();
-        connOtherServers(currentNodeId);
+        connOtherServers(RaftSystemState.currentNodeId);
     }
 
     /*建立和其他节点的连接*/
@@ -51,6 +58,14 @@ public class RaftNetWork implements ABstractRaftNet {
             }
         }
     }
+
+    public void initFollwerNodes(RaftLeader raftLeader){
+        InitFollwerReq initFollwerReq=new InitFollwerReq();
+        initFollwerReq.setLeaderId(RaftSystemState.currentNodeId);
+        initFollwerReq.setLeaderTerm(raftLeader.getTerm());
+        writeMsg(initFollwerReq);
+    }
+
 
     /*向其他节点发送通用信息*/
     public void writeMsg(Object object){

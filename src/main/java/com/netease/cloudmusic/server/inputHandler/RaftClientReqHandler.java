@@ -13,7 +13,7 @@ public class RaftClientReqHandler extends SimpleChannelInboundHandler<ClientRpcR
 
     private RaftServerContext raftServerContext;
 
-    private RaftClientReqHandler(RaftServerContext raftServerContext){
+    public RaftClientReqHandler(RaftServerContext raftServerContext){
         this.raftServerContext=raftServerContext;
     }
 

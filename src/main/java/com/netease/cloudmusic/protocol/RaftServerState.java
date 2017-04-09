@@ -6,6 +6,8 @@ import com.netease.cloudmusic.enums.RoleEnum;
 import com.netease.cloudmusic.meta.AppRpcReq;
 import com.netease.cloudmusic.meta.VoteRpcReq;
 import com.netease.cloudmusic.server.bootstrap.HostAndPort;
+import com.netease.cloudmusic.timeloop.RaftTimer;
+import com.netease.cloudmusic.timeloop.RaftTimerLoop;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,8 +40,11 @@ public class RaftServerState<T> {
         /*candidate一次选举后的获取到投票数目*/
         int votedNum;
 
+        /*定时器是否已经启动过*/
+        boolean initedFollwer=false;
 
-        public void init(){
+
+        public void init(RoleEnum roleEnum){
                 nodeId=RaftSystemState.currentNodeId;
                 hostAndPort=RaftSystemState.getNodeHosts().get(nodeId);
                 serverStat=RoleEnum.FOLLOWER;
@@ -51,6 +56,9 @@ public class RaftServerState<T> {
                                 nextIndex.put(nodeId,entryLog.getEntryByIndex(0));
                                 matchIndex.put(nodeId,entryLog.getEntryByIndex(0));
                         }
+                }
+                if (roleEnum==RoleEnum.LEADER){
+                        convertToLeader();
                 }
         }
 
@@ -65,7 +73,6 @@ public class RaftServerState<T> {
                         receiveRpc=true;
         }
 
-
         /**
          * follower处理完apeendRpc更新node属性信息
          * @param appRpcReq
@@ -73,6 +80,22 @@ public class RaftServerState<T> {
         public void updateAfterAppend(AppRpcReq appRpcReq){
                         currentTerm=appRpcReq.getLeaderTerm();
                         receiveRpc=true;
+        }
+
+        /*leader节点启动时触发follwer节点*/
+        public void convertToFollower(long leaderId,long newTerm,RaftServerContext raftServerContext){
+                serverStat=RoleEnum.FOLLOWER;
+                currentTerm=newTerm;
+                voteFor=leaderId;
+                receiveRpc=true;
+                votedNum=0;
+                //启动定时器
+                if (!initedFollwer){
+                        RaftTimerLoop raftTimerLoop=new RaftTimerLoop(raftServerContext);
+                        RaftTimer raftTimer=new RaftTimer(raftTimerLoop);
+                        raftTimerLoop.init(raftTimer);
+                        initedFollwer=true;
+                }
         }
 
         /**
@@ -105,5 +128,12 @@ public class RaftServerState<T> {
                 serverStat=RoleEnum.LEADER;
         }
 
+        public boolean isInitedFollwer(){
+                return initedFollwer;
+        }
+
+        public long getTerm(){
+                return currentTerm;
+        }
 
 }

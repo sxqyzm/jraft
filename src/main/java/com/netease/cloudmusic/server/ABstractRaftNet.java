@@ -1,5 +1,9 @@
 package com.netease.cloudmusic.server;
 
+import com.netease.cloudmusic.enums.RoleEnum;
+import com.netease.cloudmusic.protocol.RaftLeader;
+import com.netease.cloudmusic.protocol.RaftServerContext;
+
 import java.util.Map;
 
 /**
@@ -24,6 +28,13 @@ public interface ABstractRaftNet {
     /**
      * 构建网络模型
      */
-    void startNode();
+    void startNode(RaftServerContext raftServerContext,RoleEnum roleEnum);
 
-}
+    /**
+     *初始化建立和其他server 节点的连接
+     */
+    void initConnNodes();
+
+    void initFollwerNodes(RaftLeader raftLeader);
+
+    }

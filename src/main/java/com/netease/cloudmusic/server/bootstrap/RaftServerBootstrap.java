@@ -1,5 +1,6 @@
 package com.netease.cloudmusic.server.bootstrap;
 
+import com.netease.cloudmusic.enums.RoleEnum;
 import com.netease.cloudmusic.exception.RaftException;
 import com.netease.cloudmusic.protocol.RaftServerContext;
 import com.netease.cloudmusic.protocol.RaftSystemState;
@@ -34,7 +35,7 @@ public class RaftServerBootstrap {
         this.raftTimerLoop=new RaftTimerLoop(raftServerContext);
     }
 
-    public void init(){
+    public void init(RoleEnum roleEnum){
         List<HostAndPort> hostAndPorts=raftServerConfig.getServers();
         HostAndPort currenNode=raftServerConfig.getCurrentServer();
 
@@ -57,15 +58,17 @@ public class RaftServerBootstrap {
                 startId = nodeId;
             }
         }
-        raftServerContext.getRaftServer().init();
+        raftServerContext.getRaftServer().init(roleEnum);
 
     }
 
-    public void start(){
-        init();
-        raftServerContext.getRaftServer().getRaftNetWork().startNode();
-        RaftTimer raftTimer=new RaftTimer(raftTimerLoop);
-        raftTimerLoop.init(raftTimer);
+    public void start(RoleEnum roleEnum){
+        init(roleEnum);
+        raftServerContext.getRaftServer().getRaftNetWork().startNode(raftServerContext,roleEnum);
+        if (roleEnum==RoleEnum.LEADER){
+            raftServerContext.getRaftServer().getRaftNetWork().initConnNodes();
+            raftServerContext.getRaftServer().getRaftNetWork().initFollwerNodes(raftServerContext.getRaftServer());
+        }
+        System.out.println("server started");
     }
-
 }

@@ -1,5 +1,6 @@
 package com.netease.cloudmusic.server;
 
+import com.netease.cloudmusic.protocol.RaftServerContext;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
@@ -34,7 +35,7 @@ public class NettyServerLoop {
         this.port=port;
     }
 
-    private void initServerLoop(){
+    private void initServerLoop(RaftServerContext raftServerContext){
         if (serverBootstrap!=null)return;
             if (fatherLoopGroup == null) {
                 fatherLoopGroup = new NioEventLoopGroup(1);
@@ -44,16 +45,16 @@ public class NettyServerLoop {
             }
             serverBootstrap = new ServerBootstrap();
             serverBootstrap.group(fatherLoopGroup, childLoopGroup).channel(NioServerSocketChannel.class);
-            serverBootstrap.childHandler(new ServerChannelInitializer());
+            serverBootstrap.childHandler(new ServerChannelInitializer(raftServerContext));
             serverBootstrap.option(ChannelOption.SO_BACKLOG, 128).option(ChannelOption.SO_KEEPALIVE, true);
     }
 
-    public void startServerLoop(){
+    public void startServerLoop(RaftServerContext raftServerContext){
         if (!started) {
             lock.lock();
             try {
                 if (started)return;
-                initServerLoop();
+                initServerLoop(raftServerContext);
                 serverSocketChannel=serverBootstrap.bind(port).sync().channel();
                 started=true;
             } catch (InterruptedException e) {
