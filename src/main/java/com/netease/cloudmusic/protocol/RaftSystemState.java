@@ -17,9 +17,9 @@ public class RaftSystemState {
   /*当前节点的node id*/
   public static long currentNodeId;
     /*raft系统中节点id集合*/
-  protected static List<Long> nodeIds=new ArrayList<Long>();
+  public static List<Long> nodeIds=new ArrayList<Long>();
     /*raft系统中节点address集合*/
-  protected static Map<Long,HostAndPort> nodeHosts=new ConcurrentHashMap<Long, HostAndPort>();
+  public static Map<Long,HostAndPort> nodeHosts=new ConcurrentHashMap<Long, HostAndPort>();
 
   public static void init(long startId,int Num,HostAndPort hostAndPort){
     currentNodeId=startId;

@@ -30,8 +30,11 @@ public  class RaftTimerLoop extends SingleThreadEventExecutor {
     }
 
     //初始化时添加一个定时任务
-    public void init(RaftTimer raftTimer){
-        this.schedule(raftTimer, new Random().nextInt(150)+150,TimeUnit.MILLISECONDS);
+    public void init(){
+        //RaftTimer raftTimer=new RaftTimer(this);
+        RaftLeaderTimer raftLeaderTimer=new RaftLeaderTimer(this);
+        //this.schedule(raftTimer, new Random().nextInt(150)+150,TimeUnit.MILLISECONDS);
+        this.schedule(raftLeaderTimer, new Random().nextInt(50)+90,TimeUnit.MILLISECONDS);
     }
 
 

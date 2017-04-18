@@ -128,6 +128,7 @@ public class RaftProtocol implements AbstractRaftProtocol {
                 raftFollwer.receiveRpc=false;
             }else{
                 //没有，则转换成candidate，并发起选举
+                System.out.println("node"+raftFollwer.nodeId+" start candidate");
                 raftFollwer.convertToCandidate();
                 startVote(raftServerContext.getRaftServer());
             }

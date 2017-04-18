@@ -6,6 +6,7 @@ import com.netease.cloudmusic.enums.RoleEnum;
 import com.netease.cloudmusic.meta.AppRpcReq;
 import com.netease.cloudmusic.meta.VoteRpcReq;
 import com.netease.cloudmusic.server.bootstrap.HostAndPort;
+import com.netease.cloudmusic.timeloop.RaftLeaderTimer;
 import com.netease.cloudmusic.timeloop.RaftTimer;
 import com.netease.cloudmusic.timeloop.RaftTimerLoop;
 
@@ -24,24 +25,24 @@ public class RaftServerState<T> {
         public static Lock stateLcok=new ReentrantLock();
 
         //singleNodeServer state
-        long nodeId;
-        HostAndPort hostAndPort;
+        public long nodeId;
+        public HostAndPort hostAndPort;
 
-        AbstractEntryLog<T> entryLog;
+        public  AbstractEntryLog<T> entryLog;
 
         //AbstractRaftNet state
-        RoleEnum serverStat;
-        boolean receiveRpc=true;
-        long currentTerm;
-        long voteFor;
-        Map<Long,AbstractEntry> nextIndex=new HashMap<Long, AbstractEntry>();
-        Map<Long,AbstractEntry> matchIndex=new HashMap<Long, AbstractEntry>();
+        public   RoleEnum serverStat;
+        public  boolean receiveRpc=true;
+        public long currentTerm;
+        public  long voteFor;
+        public  Map<Long,AbstractEntry> nextIndex=new HashMap<Long, AbstractEntry>();
+        public  Map<Long,AbstractEntry> matchIndex=new HashMap<Long, AbstractEntry>();
 
         /*candidate一次选举后的获取到投票数目*/
-        int votedNum;
+        public  int votedNum;
 
         /*定时器是否已经启动过*/
-        boolean initedFollwer=false;
+        public  boolean initedFollwer=false;
 
 
         public void init(RoleEnum roleEnum){
@@ -92,8 +93,7 @@ public class RaftServerState<T> {
                 //启动定时器
                 if (!initedFollwer){
                         RaftTimerLoop raftTimerLoop=new RaftTimerLoop(raftServerContext);
-                        RaftTimer raftTimer=new RaftTimer(raftTimerLoop);
-                        raftTimerLoop.init(raftTimer);
+                        raftTimerLoop.init();
                         initedFollwer=true;
                 }
         }

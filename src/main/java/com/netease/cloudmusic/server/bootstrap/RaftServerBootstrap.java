@@ -59,7 +59,6 @@ public class RaftServerBootstrap {
             }
         }
         raftServerContext.getRaftServer().init(roleEnum);
-
     }
 
     public void start(RoleEnum roleEnum){

@@ -1,6 +1,7 @@
 package com.netease.cloudmusic.server.inputHandler;
 
 import com.netease.cloudmusic.meta.InitFollwerReq;
+import com.netease.cloudmusic.protocol.RaftFollwer;
 import com.netease.cloudmusic.protocol.RaftServerContext;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -18,8 +19,11 @@ public class RaftInitReqHandler extends SimpleChannelInboundHandler<InitFollwerR
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, InitFollwerReq initFollwerReq) throws Exception {
-        if (!raftServerContext.getRaftServer().isInitedFollwer()){
-            raftServerContext.getRaftServer().convertToFollower(initFollwerReq.getLeaderId(),initFollwerReq.getLeaderTerm(),raftServerContext);
+        RaftFollwer raftFollwer=raftServerContext.getRaftServer();
+
+        if (!raftFollwer.isInitedFollwer()){
+            raftFollwer.getRaftNetWork().initConnNodes();
+            raftFollwer.convertToFollower(initFollwerReq.getLeaderId(),initFollwerReq.getLeaderTerm(),raftServerContext);
         }
         System.out.println("follower started");
     }

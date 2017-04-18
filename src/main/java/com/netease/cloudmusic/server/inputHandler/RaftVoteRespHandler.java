@@ -18,6 +18,7 @@ public class RaftVoteRespHandler extends SimpleChannelInboundHandler<VoteRpcResp
     }
 
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, VoteRpcResp voteRpcResp) throws Exception {
+        System.out.println("get vote resp:"+voteRpcResp.toString());
         raftServerContext.getRaftServer().processVoteResp(voteRpcResp);
     }
 }

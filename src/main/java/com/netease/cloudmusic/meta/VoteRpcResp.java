@@ -31,4 +31,8 @@ public class VoteRpcResp implements Serializable {
     public void setTerm(long term) {
         this.term = term;
     }
+
+    public String toString(){
+        return term+"-"+voteGranted;
+    }
 }

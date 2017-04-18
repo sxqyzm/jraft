@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="jar://$MAVEN_REPOSITORY$/com/netease/mylife/mylife-dao/2.1.8/mylife-dao-2.1.8.jar!/com/netease/framework/dao/CommonObjectDao.java" charset="GBK" />
+    <file url="jar://$MAVEN_REPOSITORY$/com/netease/mylife/mylife-dao/2.1.8/mylife-dao-2.1.8.jar!/com/netease/framework/dao/mc/AbstractDaoCacheBase.java" charset="GBK" />
+    <file url="jar://$MAVEN_REPOSITORY$/com/netease/mylife/mylife-dao/2.1.8/mylife-dao-2.1.8.jar!/com/netease/framework/dao/sql/AbstractDaoSqlBase.java" charset="GBK" />
+    <file url="jar://$MAVEN_REPOSITORY$/com/netease/mylife/mylife-dao/2.1.8/mylife-dao-2.1.8.jar!/com/netease/framework/dao/sql/IDObjectDaoSqlBase.java" charset="GBK" />
+    <file url="jar://$MAVEN_REPOSITORY$/com/netease/mylife/mylife-dao/2.1.8/mylife-dao-2.1.8.jar!/com/netease/framework/dbsupport/IConnectionManager.java" charset="GBK" />
+    <file url="jar://$MAVEN_REPOSITORY$/com/netease/mylife/mylife-dao/2.1.8/mylife-dao-2.1.8.jar!/com/netease/framework/dbsupport/SqlManager.java" charset="GBK" />
+    <file url="jar://$MAVEN_REPOSITORY$/com/netease/mylife/mylife-dao/2.1.8/mylife-dao-2.1.8.jar!/com/netease/framework/dbsupport/impl/ConnectionManagerDDBImpl.java" charset="GBK" />
+    <file url="jar://$MAVEN_REPOSITORY$/com/netease/mylife/mylife-dao/2.1.8/mylife-dao-2.1.8.jar!/com/netease/framework/dbsupport/impl/SqlManagerImpl.java" charset="GBK" />
+    <file url="jar://$MAVEN_REPOSITORY$/com/netease/mylife/mylife-dao/2.1.8/mylife-dao-2.1.8.jar!/com/netease/framework/dbsupport/transaction/IDBTransactionManager.java" charset="GBK" />
+    <file url="jar://$MAVEN_REPOSITORY$/com/netease/mylife/mylife-dao/2.1.8/mylife-dao-2.1.8.jar!/com/netease/framework/memcache/manager/MemcacheManager.java" charset="GBK" />
+    <file url="jar://$MAVEN_REPOSITORY$/com/netease/mylife/mylife-dao/2.1.8/mylife-dao-2.1.8.jar!/com/netease/framework/memcache/manager/impl/MemcacheManagerImpl.java" charset="GBK" />
+    <file url="jar://$MAVEN_REPOSITORY$/com/netease/mylife/mylife-dao/2.1.8/mylife-dao-2.1.8.jar!/com/netease/framework/memcache/transaction/MemcacheOperation.java" charset="GBK" />
+    <file url="jar://$MAVEN_REPOSITORY$/com/netease/mylife/mylife-dao/2.1.8/mylife-dao-2.1.8.jar!/com/netease/framework/memcache/transaction/impl/MemcacheTransactionManagerImpl.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
   </component>
 </project>

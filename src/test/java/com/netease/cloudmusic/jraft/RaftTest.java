@@ -26,8 +26,7 @@ public class RaftTest {
         RaftServerContext raftServerContext=new RaftServerContext();
         raftServerContext.setRaftServer(raftLeader);
         RaftTimerLoop timeLoop=new RaftTimerLoop(raftServerContext);
-        RaftTimer raftTimer=new RaftTimer(timeLoop);
-        timeLoop.init(raftTimer);
+        timeLoop.init();
         System.out.println("add"+System.currentTimeMillis());
         while (true){
 
@@ -45,7 +44,7 @@ public class RaftTest {
         hostAndPortList.add(hostAndPort_2);
         hostAndPortList.add(hostAndPort_3);
 
-        RaftServerConfig raftServerConfig=new RaftServerConfig(RoleEnum.FOLLOWER, hostAndPort_1,hostAndPortList);
+        RaftServerConfig raftServerConfig=new RaftServerConfig(RoleEnum.LEADER, hostAndPort_1,hostAndPortList);
         RaftServerContext raftServerContext=new RaftServerContext();
         raftServerContext.setRaftServer(new RaftLeader(new RaftEntryLogUseList()));
 
