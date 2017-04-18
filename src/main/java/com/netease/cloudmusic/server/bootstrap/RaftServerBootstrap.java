@@ -46,18 +46,18 @@ public class RaftServerBootstrap {
         if (hostAndPorts==null||hostAndPorts.size()==0){
             throw new RaftException("no valid host and port");
         }
-        long startId=10086L;
-        long step=100L;
-        RaftSystemState.init(startId,hostAndPorts.size(),raftServerConfig.getCurrentServer());
-
-        for (HostAndPort hostAndPort:hostAndPorts){
-            if (!hostAndPort.equals(raftServerConfig.getCurrentServer())) {
-                long nodeId = startId + step;
-                RaftSystemState.getNodeIds().add(nodeId);
-                RaftSystemState.getNodeHosts().put(nodeId, hostAndPort);
-                startId = nodeId;
-            }
+        long currentNodeId=0;
+        for (int i=0;i<hostAndPorts.size();i++){
+            HostAndPort hostAndPortTemp=hostAndPorts.get(i);
+            Long nodeIdTemp=raftServerConfig.getNodeId().get(i);
+                if (hostAndPortTemp.equals(raftServerConfig.getCurrentServer())){
+                    currentNodeId=nodeIdTemp;
+                }
+            RaftSystemState.getNodeIds().add(nodeIdTemp);
+            RaftSystemState.getNodeHosts().put(nodeIdTemp, hostAndPortTemp);
         }
+        RaftSystemState.init(currentNodeId,hostAndPorts.size(),raftServerConfig.getCurrentServer());
+
         raftServerContext.getRaftServer().init(roleEnum);
     }
 

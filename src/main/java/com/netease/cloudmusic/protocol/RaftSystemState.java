@@ -24,9 +24,6 @@ public class RaftSystemState {
   public static void init(long startId,int Num,HostAndPort hostAndPort){
     currentNodeId=startId;
     nodeNum=Num;
-    nodeIds.clear();
-    nodeHosts.clear();
-    nodeHosts.put(startId,hostAndPort);
   }
 
   public static List<Long> getNodeIds(){

@@ -15,11 +15,13 @@ public class RaftServerConfig {
 
     private final HostAndPort currentServer;
 
+    private final List<Long> nodeId;
     private final List<HostAndPort> servers;
 
-    public RaftServerConfig(RoleEnum roleEnum, HostAndPort currentServer, List<HostAndPort> servers) {
+    public RaftServerConfig(RoleEnum roleEnum, HostAndPort currentServer, List<Long> nodeId, List<HostAndPort> servers) {
         this.roleEnum = roleEnum;
         this.currentServer = currentServer;
+        this.nodeId = nodeId;
         this.servers = servers;
     }
 
@@ -29,5 +31,9 @@ public class RaftServerConfig {
 
     public List<HostAndPort> getServers() {
         return servers;
+    }
+
+    public List<Long> getNodeId() {
+        return nodeId;
     }
 }
