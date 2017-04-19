@@ -16,6 +16,5 @@ public class ServerEncoder extends MessageToByteEncoder {
         int len=doutData.length;
         out.writeInt(len);
         out.writeBytes(doutData);
-        ctx.writeAndFlush(out);
     }
 }

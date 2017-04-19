@@ -67,6 +67,7 @@ public class RaftServerBootstrap {
         if (roleEnum==RoleEnum.LEADER){
             raftServerContext.getRaftServer().getRaftNetWork().initConnNodes();
             raftServerContext.getRaftServer().getRaftNetWork().initFollwerNodes(raftServerContext.getRaftServer());
+            raftServerContext.getRaftServer().startTimeLoop(raftServerContext);
         }
         System.out.println("server started");
     }

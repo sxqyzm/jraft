@@ -25,25 +25,29 @@ public class RaftLeaderTimer implements Runnable {
     }
 
     public void run() {
+        System.out.println(System.currentTimeMillis());
         RaftServerContext raftServerContext=raftTimerLoop.getRaftServerContext();
         RaftLeader raftLeader=raftServerContext.getRaftServer();
         if (raftLeader.serverStat== RoleEnum.LEADER) {
             for (long nodeId : RaftSystemState.nodeIds) {
-                AbstractEntry preEntry = (AbstractEntry) raftLeader.nextIndex.get(nodeId);
-                if (preEntry == null) {
-                    preEntry = raftLeader.getEntryLog().getEntryByIndex(0);
-                    raftLeader.nextIndex.put(nodeId, preEntry);
+                if (nodeId != raftLeader.nodeId) {
+                    AbstractEntry preEntry = (AbstractEntry) raftLeader.nextIndex.get(nodeId);
+                    if (preEntry == null) {
+                        preEntry = raftLeader.getEntryLog().getEntryByIndex(0);
+                        raftLeader.nextIndex.put(nodeId, preEntry);
+                    }
+                    AppRpcReq appRpcReq = new AppRpcReq();
+                    appRpcReq.setLeaderId(raftLeader.nodeId);
+                    appRpcReq.setLeaderCommit(raftLeader.getCommitIndex().getIndex());
+                    appRpcReq.setLeaderTerm(raftLeader.currentTerm);
+                    appRpcReq.setPrevLogIndex(preEntry.getIndex());
+                    appRpcReq.setPrevLogTerm(preEntry.getTerm());
+                    appRpcReq.setAppendEntrys(null);
+                    raftLeader.getRaftNetWork().writeDIffAppenMsg(nodeId, appRpcReq);
+                    System.out.println("leader send heartBeat "+nodeId);
                 }
-                AppRpcReq appRpcReq = new AppRpcReq();
-                appRpcReq.setLeaderId(raftLeader.nodeId);
-                appRpcReq.setLeaderCommit(raftLeader.getCommitIndex().getIndex());
-                appRpcReq.setLeaderTerm(raftLeader.currentTerm);
-                appRpcReq.setPrevLogIndex(preEntry.getIndex());
-                appRpcReq.setPrevLogTerm(preEntry.getTerm());
-                appRpcReq.setAppendEntrys(null);
-                raftLeader.getRaftNetWork().writeDIffAppenMsg(nodeId, appRpcReq);
             }
         }
-        raftTimerLoop.schedule(new RaftTimer(raftTimerLoop),new Random().nextInt(50)+90, TimeUnit.MILLISECONDS);
+        raftTimerLoop.schedule(new RaftLeaderTimer(raftTimerLoop),new Random().nextInt(1000)+90, TimeUnit.MILLISECONDS);
     }
 }

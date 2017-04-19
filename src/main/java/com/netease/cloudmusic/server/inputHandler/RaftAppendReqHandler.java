@@ -20,7 +20,7 @@ public class RaftAppendReqHandler extends SimpleChannelInboundHandler<AppRpcReq>
 
     protected void channelRead0(ChannelHandlerContext ctx, AppRpcReq appRpcReq) throws Exception {
         System.out.println("get app Msg");
-        AppRpcResp appRpcResp=raftServerContext.getRaftServer().acceptAppenRpc(appRpcReq);
-        ctx.writeAndFlush(appRpcResp);
+        //  AppRpcResp appRpcResp=raftServerContext.getRaftServer().acceptAppenRpc(appRpcReq);
+       // ctx.writeAndFlush(appRpcResp);
     }
 }

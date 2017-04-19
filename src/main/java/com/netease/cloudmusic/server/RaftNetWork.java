@@ -53,6 +53,8 @@ public class RaftNetWork implements ABstractRaftNet {
                 HostAndPort hostAndPort=RaftSystemState.getNodeHosts().get(nodeId);
                 SocketChannel socketChannel=nettyClientLoop.connServer(hostAndPort.getHost(),hostAndPort.getPort());
                 if (socketChannel!=null) {
+
+
                     serversMap.put(nodeId, socketChannel);
                 }
             }
@@ -71,7 +73,7 @@ public class RaftNetWork implements ABstractRaftNet {
     public void writeMsg(Object object){
         for (long key:serversMap.keySet()){
             try {
-                serversMap.get(key).write(object);
+                serversMap.get(key).writeAndFlush(object);
             }catch (Exception e){
                 //TODO 向其他节点发送信息时出现异常
             }
@@ -82,7 +84,7 @@ public class RaftNetWork implements ABstractRaftNet {
     public void writeDIffAppenMsg(long nodeId,Object object){
         SocketChannel socketChannel=serversMap.get(nodeId);
         try {
-            socketChannel.write(object);
+            socketChannel.writeAndFlush(object);
         }catch (Exception e){
             //TODO 向其他节点发送信息时出现异常
         }

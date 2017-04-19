@@ -48,7 +48,7 @@ public class RaftServerState<T> {
         public void init(RoleEnum roleEnum){
                 nodeId=RaftSystemState.currentNodeId;
                 hostAndPort=RaftSystemState.getNodeHosts().get(nodeId);
-                serverStat=RoleEnum.FOLLOWER;
+                serverStat=roleEnum;
                 currentTerm=0;
                 voteFor=0;
                 votedNum=0;
@@ -91,7 +91,13 @@ public class RaftServerState<T> {
                 receiveRpc=true;
                 votedNum=0;
                 //启动定时器
+                startTimeLoop(raftServerContext);
+        }
+
+        public void startTimeLoop(RaftServerContext raftServerContext){
+                //启动定时器
                 if (!initedFollwer){
+                        System.out.println("init timeLoop");
                         RaftTimerLoop raftTimerLoop=new RaftTimerLoop(raftServerContext);
                         raftTimerLoop.init();
                         initedFollwer=true;

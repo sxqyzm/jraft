@@ -22,14 +22,15 @@ public class RaftTest {
     @Test
     public void loopTest(){
         RaftLeader raftLeader=new RaftLeader(new RaftEntryLogUseList());
-        RaftServerContext raftServerContext=new RaftServerContext();
+        /*RaftServerContext raftServerContext=new RaftServerContext();
         raftServerContext.setRaftServer(raftLeader);
         RaftTimerLoop timeLoop=new RaftTimerLoop(raftServerContext);
         timeLoop.init();
         System.out.println("add"+System.currentTimeMillis());
         while (true){
 
-        }
+        }*/
+        System.out.println(raftLeader.getCommitIndex().getIndex());
     }
 
 

@@ -35,11 +35,13 @@ public class RaftEntryLogUseList<T> implements AbstractEntryLog<T> {
     }
 
     public AbstractEntry<T> getCommitIndex() {
+        if (commitIndex==null)return head;
         return commitIndex;
     }
 
     public AbstractEntry<T> getApplyIndex() {
-        return null;
+        if (applyIndex==null)return head;
+        return applyIndex;
     }
 
     public AbstractEntry<T> getEntryByIndex(long index) {
