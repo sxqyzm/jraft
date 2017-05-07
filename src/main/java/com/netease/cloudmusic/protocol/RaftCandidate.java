@@ -25,6 +25,7 @@ public class RaftCandidate<T> extends RaftFollwer<T> implements AbstractCandidat
             voteRpcReq.setLastLogIndex(abstractEntry.getIndex());
             voteRpcReq.setLastLogTerm(abstractEntry.getTerm());
             RaftProtocol.startVote(this.getRaftNetWork(), voteRpcReq);
+
         }finally {
             RaftServerState.stateLcok.unlock();
         }

@@ -9,7 +9,7 @@ public class RaftServerContext {
 
 
     public RaftLeader getRaftServer() {
-        return raftServer;
+         return raftServer;
     }
 
     public void setRaftServer(RaftLeader raftServer) {

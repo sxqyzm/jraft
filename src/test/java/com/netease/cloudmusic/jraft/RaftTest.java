@@ -28,7 +28,6 @@ public class RaftTest {
         timeLoop.init();
         System.out.println("add"+System.currentTimeMillis());
         while (true){
-
         }*/
         System.out.println(raftLeader.getCommitIndex().getIndex());
     }

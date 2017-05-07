@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by hzzhangmeng2 on 2017/4/11.
+ * 定时向follwer发送心跳
  */
 public class RaftLeaderTimer implements Runnable {
 

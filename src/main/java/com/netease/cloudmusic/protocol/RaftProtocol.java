@@ -5,9 +5,13 @@ import com.netease.cloudmusic.entry.RaftEntry;
 import com.netease.cloudmusic.enums.RoleEnum;
 import com.netease.cloudmusic.meta.*;
 import com.netease.cloudmusic.server.RaftNetWork;
+import com.netease.cloudmusic.timeloop.RaftCandidateTimer;
+import com.netease.cloudmusic.timeloop.RaftTimerLoop;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by hzzhangmeng2 on 2017/3/9.
@@ -120,9 +124,9 @@ public class RaftProtocol implements AbstractRaftProtocol {
     }
 
 
-    public static boolean doRaftTimeLoop(RaftServerContext raftServerContext){
-        if (raftServerContext.getRaftServer().serverStat==RoleEnum.FOLLOWER){
-            RaftFollwer raftFollwer=raftServerContext.getRaftServer();
+    public static boolean doRaftTimeLoop(RaftTimerLoop raftTimerLoop){
+        if (raftTimerLoop.getRaftServerContext().getRaftServer().serverStat==RoleEnum.FOLLOWER){
+            RaftFollwer raftFollwer=raftTimerLoop.getRaftServerContext().getRaftServer();
             if (raftFollwer.receiveRpc==true){
                 //收到过leader的heartbeat，重置recieveRpc
                 raftFollwer.receiveRpc=false;
@@ -130,7 +134,8 @@ public class RaftProtocol implements AbstractRaftProtocol {
                 //没有，则转换成candidate，并发起选举
                 System.out.println("node"+raftFollwer.nodeId+" start candidate");
                 raftFollwer.convertToCandidate();
-                startVote(raftServerContext.getRaftServer());
+                startVote(raftTimerLoop.getRaftServerContext().getRaftServer());
+                raftTimerLoop.schedule(new RaftCandidateTimer(raftTimerLoop),new Random().nextInt(150)+150, TimeUnit.MILLISECONDS);
             }
         }
         return true;

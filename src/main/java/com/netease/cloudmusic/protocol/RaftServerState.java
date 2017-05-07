@@ -6,13 +6,10 @@ import com.netease.cloudmusic.enums.RoleEnum;
 import com.netease.cloudmusic.meta.AppRpcReq;
 import com.netease.cloudmusic.meta.VoteRpcReq;
 import com.netease.cloudmusic.server.bootstrap.HostAndPort;
-import com.netease.cloudmusic.timeloop.RaftLeaderTimer;
-import com.netease.cloudmusic.timeloop.RaftTimer;
 import com.netease.cloudmusic.timeloop.RaftTimerLoop;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -140,6 +137,12 @@ public class RaftServerState<T> {
 
         public long getTerm(){
                 return currentTerm;
+        }
+
+        public boolean reStartCandidate(){
+                this.currentTerm++;
+                this.votedNum=0;
+                return true;
         }
 
 }

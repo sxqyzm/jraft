@@ -4,9 +4,7 @@ import com.netease.cloudmusic.enums.RoleEnum;
 import com.netease.cloudmusic.exception.RaftException;
 import com.netease.cloudmusic.protocol.RaftServerContext;
 import com.netease.cloudmusic.protocol.RaftSystemState;
-import com.netease.cloudmusic.server.RaftNetWork;
 import com.netease.cloudmusic.server.config.RaftServerConfig;
-import com.netease.cloudmusic.timeloop.RaftTimer;
 import com.netease.cloudmusic.timeloop.RaftTimerLoop;
 
 import java.util.List;
