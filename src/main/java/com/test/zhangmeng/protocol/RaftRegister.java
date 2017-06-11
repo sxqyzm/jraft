@@ -1,4 +1,4 @@
-package com.netease.cloudmusic.protocol;
+package com.test.zhangmeng.protocol;
 
 /**
  * Created by zhangmeng on 2017/6/11.
