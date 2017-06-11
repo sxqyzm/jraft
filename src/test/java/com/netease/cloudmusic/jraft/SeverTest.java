@@ -1,6 +1,7 @@
 package com.netease.cloudmusic.jraft;
 
 import com.netease.cloudmusic.meta.ClientRpcReq;
+import com.netease.cloudmusic.protocol.RaftRegister;
 import com.netease.cloudmusic.server.NettyClientLoop;
 import com.netease.cloudmusic.server.RaftNetWork;
 import io.netty.channel.socket.SocketChannel;
@@ -21,6 +22,21 @@ public class SeverTest {
         synchronized (this){
             this.wait();
         }
+    }
+
+    @Test
+    public void justTest(){
+        RaftRegister raftRegister=new RaftRegister();
+        System.out.println(Integer.toBinaryString(raftRegister.getRegister()));
+        raftRegister.setting(5);
+        raftRegister.setting(4);
+        System.out.println(Integer.toBinaryString(raftRegister.getRegister()));
+        System.out.println(raftRegister.getStation(5));
+        raftRegister.resetting(5);
+        System.out.println(Integer.toBinaryString(raftRegister.getRegister()));
+        System.out.println(raftRegister.getStation(4));
+        System.out.println(raftRegister.getStation(5));
+
     }
 
 }

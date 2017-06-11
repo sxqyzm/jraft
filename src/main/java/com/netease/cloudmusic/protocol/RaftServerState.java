@@ -19,6 +19,11 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class RaftServerState<T> {
 
+        /**
+         *
+         */
+        private RaftRegister serverState=new RaftRegister();
+
         public static Lock stateLcok=new ReentrantLock();
 
         //singleNodeServer state
