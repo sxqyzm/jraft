@@ -2,16 +2,20 @@ package com.test.zhangmeng.server;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by hzzhangmeng2 on 2017/1/20.
+ * 基于netty的client网络通信类
  */
 public class NettyClientLoop {
 
@@ -21,24 +25,27 @@ public class NettyClientLoop {
 
     private boolean inited=false;
 
+    private ChannelInitializer channelInitializer;
+
     Lock lock=new ReentrantLock();
 
-    public NettyClientLoop(){
-        
+    public NettyClientLoop(ChannelInitializer channelInitializer){
+        this.channelInitializer = channelInitializer;
     }
 
-    public NettyClientLoop(EventLoopGroup clientLoopGroup){
+    public NettyClientLoop(ChannelInitializer channelInitializer,EventLoopGroup clientLoopGroup){
         this.clientLoopGroup=clientLoopGroup;
+        this.channelInitializer = channelInitializer;
     }
 
     private void initClientLoop(){
         if (clientLoopGroup==null) {
-            clientLoopGroup = new NioEventLoopGroup();
+            clientLoopGroup = new NioEventLoopGroup(1);
         }
         bootstrap=new Bootstrap();
         bootstrap.group(clientLoopGroup);
         bootstrap.channel(NioSocketChannel.class);
-        bootstrap.handler(new ClientChannelInitilizer());
+        bootstrap.handler(channelInitializer);
     }
 
     public void startClientLoop(){

@@ -7,6 +7,7 @@ import com.test.zhangmeng.protocol.RaftLeader;
 import com.test.zhangmeng.protocol.RaftServerContext;
 import com.test.zhangmeng.protocol.RaftSystemState;
 import com.test.zhangmeng.server.bootstrap.HostAndPort;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 
 import java.util.HashMap;
@@ -34,13 +35,14 @@ public class RaftNetWork implements ABstractRaftNet {
             throw new RaftException("start node fail:invalid currentNodeId");
         }
         this.port=hostAndPort.getPort();
-        this.nettyServerLoop=new NettyServerLoop(port);
-        nettyServerLoop.startServerLoop(raftServerContext);
-
+        ChannelInitializer channelInitializer = new ServerChannelInitializer(raftServerContext);
+        this.nettyServerLoop=new NettyServerLoop(channelInitializer,port);
+        nettyServerLoop.startServerLoop();
     }
 
     public void initConnNodes(){
-        this.nettyClientLoop=new NettyClientLoop();
+        ChannelInitializer channelInitializer = new ClientChannelInitilizer();
+        this.nettyClientLoop=new NettyClientLoop(channelInitializer);
         nettyClientLoop.startClientLoop();
         connOtherServers(RaftSystemState.currentNodeId);
     }
@@ -52,8 +54,6 @@ public class RaftNetWork implements ABstractRaftNet {
                 HostAndPort hostAndPort=RaftSystemState.getNodeHosts().get(nodeId);
                 SocketChannel socketChannel=nettyClientLoop.connServer(hostAndPort.getHost(),hostAndPort.getPort());
                 if (socketChannel!=null) {
-
-
                     serversMap.put(nodeId, socketChannel);
                 }
             }
