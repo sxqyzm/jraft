@@ -1,0 +1,51 @@
+<netty>
+    <BootStrap>
+        <tag>
+            主要提供网络IO框架的初始配置，使用封装功能。如配置NioEventLoop，配置channel选项，配置channel所属pipeline的出入handler集合，封装nio使用等功能。
+        </tag>
+        <tag>
+            提供了bind（）和connect（）方法。netty是基于nio的网络框架，实际上是对jdk中nio的包装实现，封闭以及简化了使用NIO的复杂操作。一般使用NIO的步骤如下：
+                1）声明一个selector
+                2）声明一个channel，对于服务端是声明一个ServerSocketChannel，bind到某个端口；对于客户端是声明一个SocketChannel，connect到某个远程地址和端口。
+                3）将channel注册到selector上，并声明感兴趣的事件。（accept、connect、read、write）
+                4）通过selector的select方法获取到触发事件的channel，进行相应业务操作。
+            其中1,2,3步是使用初始化手段，bootStrap中的bind（）和connect（）方法就集成封装了这三步动作。
+                1）bind（）和connect（）方法通过initAndRegister()方法来进行初始化和注册操作
+                2）initAndRegister()由init和register方法构成，init（）方法由AbstractBootStrap的继承类实现（用于服务端的ServerBootstrap和用于客户端的Bootstrap）
+                    ,主要是声明channel和设置配置选项，register（）方法则就是把channel注册到eventloop中的selector上。
+                3）使用方根据bind（）和connect（）方法返回的channel就可以进行后续的操作，如使用connect方法返回的channel就行write操作。
+        </tag>
+    </BootStrap>
+
+    <Channel>
+        <tag>
+            对nio中channel的包装实现（以后所说的channel特指netty实现的对java nio channel封装的channel）。channel中的方法分为两个部分，
+            一部分是提供给用户使用的方法，这部分方法都是通过pipeline来进行。
+            另一部分是在unsafe接口里的方法，这部分方法都是通过封装的java nio Channel来进行实际的io操作，不对用户开放，由框架来使用保证安全性。
+            其实通过pipeline来进行的方法最后还是会调用unsafe中的方法来进行实际的io操作，只不过需要经过pipeline进行事先配置的handler处理。
+        </tag>
+        <tag>
+            Channel会作为attach参数注册到selector上，所以每次通过Selector.select()得到selectorkey时就可以从attach取到对应的channel。
+            然后通过channel从jdk nio 回到netty框架上，由netty框架来封装NIO操作。
+        </tag>
+    </Channel>
+
+    <EventLoop>
+        异步任务执行器Executor和NIO事件循环（selector）的结合体，即代表一个异步任务处理器，又代表NIO的selector的框架实现（register、循环selector）。
+        Channel的所有操作都是异步，每个通过Channel的操作都会把Channel包装成ChannelFuture对象，并返回这个ChannelFuture对象。
+        然后通过EventLoop异步对这个ChannelFuture对象进行相应的IO操作，客户端可以根据ChannelFuture对象观察到相应操作的执行情况
+    </EventLoop>
+
+    <PipeLine>
+       <tag>
+           读写handler管道容器，每个Channel持有一个pipeline对象，对于channel的使用方来说，其所有操作都被交给pipeline来进行。
+           pipeline将读取到的msg或者要write的msg经过过滤的handler处理后再通过channel本身的unsafe接口定义的io操作方法进行实际的io操作。
+       </tag>
+        <tag>
+            Pipeline中有两个默认的Handler，Headhandler和TailHandler，分别代表handler链的头和尾，这两个handler都是同时继承了inputHandler和outHandler接口。
+            所有的read操作都会从head开始，经过所有配置的inputHandler处理后到tailHandler。如果在中间某个handler进行了实际的处理就不会往下继续走。即没有调用fireChannelRead方法触发下一个handler
+            所有的write操作都会从tailHandler开始，经过所有配置的outHandler处理后到headHandler。最后调用headHandler中调用unsafe.write（）方法进行实际的io操作。
+        </tag>
+    </PipeLine>
+
+</netty>

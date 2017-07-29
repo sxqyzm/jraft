@@ -1,13 +1,11 @@
 package com.test.zhangmeng.server;
 
-import com.test.zhangmeng.protocol.RaftServerContext;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 import java.util.concurrent.locks.Lock;
@@ -22,50 +20,50 @@ public class NettyServerLoop {
     private ServerBootstrap serverBootstrap;
     private EventLoopGroup fatherLoopGroup;
     private EventLoopGroup childLoopGroup;
-    private Channel serverSocketChannel=null;
+    private Channel serverSocketChannel = null;
     private ChannelInitializer channelInitializer;
-    private Lock lock=new ReentrantLock();
+    private Lock lock = new ReentrantLock();
     private volatile boolean started;
 
 
-    public NettyServerLoop(ChannelInitializer channelInitializer,int port){
+    public NettyServerLoop(ChannelInitializer channelInitializer, int port) {
         this.port = port;
         this.channelInitializer = channelInitializer;
     }
 
-    public NettyServerLoop(EventLoopGroup fatherLoopGroup,EventLoopGroup childLoopGroup,ChannelInitializer channelInitializer,int port){
-        this.fatherLoopGroup=fatherLoopGroup;
-        this.childLoopGroup=childLoopGroup;
+    public NettyServerLoop(EventLoopGroup fatherLoopGroup, EventLoopGroup childLoopGroup, ChannelInitializer channelInitializer, int port) {
+        this.fatherLoopGroup = fatherLoopGroup;
+        this.childLoopGroup = childLoopGroup;
         this.channelInitializer = channelInitializer;
-        this.port=port;
+        this.port = port;
     }
 
-    private void initServerLoop(){
-        if (serverBootstrap!=null)return;
-            if (fatherLoopGroup == null) {
-                fatherLoopGroup = new NioEventLoopGroup(1);
-            }
-            if (childLoopGroup == null) {
-                childLoopGroup = new NioEventLoopGroup(4);
-            }
-            serverBootstrap = new ServerBootstrap();
-            serverBootstrap.group(fatherLoopGroup, childLoopGroup).channel(NioServerSocketChannel.class);
-            serverBootstrap.childHandler(channelInitializer);
-            serverBootstrap.option(ChannelOption.SO_BACKLOG, 128).option(ChannelOption.SO_KEEPALIVE, true);
+    private void initServerLoop() {
+        if (serverBootstrap != null) return;
+        if (fatherLoopGroup == null) {
+            fatherLoopGroup = new NioEventLoopGroup(1);
+        }
+        if (childLoopGroup == null) {
+            childLoopGroup = new NioEventLoopGroup(4);
+        }
+        serverBootstrap = new ServerBootstrap();
+        serverBootstrap.group(fatherLoopGroup, childLoopGroup).channel(NioServerSocketChannel.class);
+        serverBootstrap.childHandler(channelInitializer);
+        serverBootstrap.option(ChannelOption.SO_BACKLOG, 128).option(ChannelOption.SO_KEEPALIVE, true);
     }
 
-    public Channel startServerLoop(){
+    public Channel startServerLoop() {
         if (!started) {
             lock.lock();
             try {
-                if (started)return serverSocketChannel;
+                if (started) return serverSocketChannel;
                 initServerLoop();
                 serverSocketChannel = serverBootstrap.bind(port).sync().channel();
-                started=true;
+                started = true;
             } catch (InterruptedException e) {
                 fatherLoopGroup.shutdownGracefully();
                 childLoopGroup.shutdownGracefully();
-            }finally {
+            } finally {
                 lock.unlock();
                 return serverSocketChannel;
             }
@@ -73,9 +71,9 @@ public class NettyServerLoop {
         return serverSocketChannel;
     }
 
-    public void closeServerLoop(){
-        if (fatherLoopGroup!=null)fatherLoopGroup.shutdownGracefully();
-        if (childLoopGroup!=null)childLoopGroup.shutdownGracefully();
+    public void closeServerLoop() {
+        if (fatherLoopGroup != null) fatherLoopGroup.shutdownGracefully();
+        if (childLoopGroup != null) childLoopGroup.shutdownGracefully();
     }
 
 }

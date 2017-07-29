@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Created by hzzhangmeng2 on 2017/1/16.
  */
-public class RaftNetWork implements ABstractRaftNet {
+public class RaftNetWork implements AbstractRaftNet {
 
     private int port;
 

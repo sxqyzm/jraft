@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Created by hzzhangmeng2 on 2017/1/16.
  */
-public interface ABstractRaftNet {
+public interface AbstractRaftNet {
 
     /**
      * 建立到raft集群中其他server的连接
