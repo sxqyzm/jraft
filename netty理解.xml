@@ -36,6 +36,15 @@
         然后通过EventLoop异步对这个ChannelFuture对象进行相应的IO操作，客户端可以根据ChannelFuture对象观察到相应操作的执行情况
     </EventLoop>
 
+    <ChannelFuture>
+        future模式其实是一种将同步执行的方法异步化的方式，比如类Channel有个方法register，表示将channel注册到selector中，一般同步方式就是当前channel对象直接调用
+        channel.register();方法执行完正常返回后channel就注册成功到了selector上了。变成future模式的话就是加一个方法register(ChannelPromise).
+        ChannelPromise是netty中对Future的进一步的拓展，拓展版的ChannelFuture对象，可以添加Listener，在任务处理到某个状态（失败、成功、异常）执行相应listener集合。
+        register(ChannelPromise)会调用同步方法register（）执行实际的注册动作，同时会在任务处理到某个状态（失败、成功、异常）时更新ChannelPromise对象的状态。
+        这样持有ChannelPromise对象的调用者就可以根据观察到的ChannelPromise的状态执行相应的动作。
+        一般会把register(ChannelPromise)的调用封装成一个线程任务交给一个异步任务处理器调用，这样就实现了异步化
+    </ChannelFuture>
+
     <PipeLine>
        <tag>
            读写handler管道容器，每个Channel持有一个pipeline对象，对于channel的使用方来说，其所有操作都被交给pipeline来进行。
