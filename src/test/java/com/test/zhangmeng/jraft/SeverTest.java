@@ -1,14 +1,14 @@
 package com.test.zhangmeng.jraft;
 
-<<<<<<< HEAD:src/test/java/com/netease/cloudmusic/jraft/SeverTest.java
-import com.netease.cloudmusic.meta.ClientRpcReq;
-import com.netease.cloudmusic.protocol.RaftRegister;
-import com.netease.cloudmusic.server.NettyClientLoop;
-import com.netease.cloudmusic.server.RaftNetWork;
-=======
+import com.test.zhangmeng.entry.RaftEntryLogUseList;
 import com.test.zhangmeng.meta.ClientRpcReq;
+import com.test.zhangmeng.protocol.RaftLeader;
+import com.test.zhangmeng.protocol.RaftRegister;
+import com.test.zhangmeng.protocol.RaftServerContext;
+import com.test.zhangmeng.server.ClientChannelInitilizer;
 import com.test.zhangmeng.server.NettyClientLoop;
->>>>>>> 9f410a59c185e13f88f57dc2edfdcdaef48f118a:src/test/java/com/test/zhangmeng/jraft/SeverTest.java
+import com.test.zhangmeng.server.NettyServerLoop;
+import com.test.zhangmeng.server.ServerChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import org.junit.Test;
 
@@ -19,19 +19,29 @@ public class SeverTest {
 
     @Test
     public void testServer() throws InterruptedException {
-        NettyClientLoop nettyClientLoop=new NettyClientLoop();
-        SocketChannel socketChannel=nettyClientLoop.connServer("127.0.0.1", 22224);
-        ClientRpcReq<Long> clientRpcReq=new ClientRpcReq<Long>();
+        NettyClientLoop nettyClientLoop = new NettyClientLoop(new ClientChannelInitilizer());
+        SocketChannel socketChannel = nettyClientLoop.connServer("127.0.0.1", 22224);
+        ClientRpcReq<Long> clientRpcReq = new ClientRpcReq<Long>();
         clientRpcReq.setApplyOrder(12L);
         socketChannel.writeAndFlush(clientRpcReq);
-        synchronized (this){
+        synchronized (this) {
             this.wait();
         }
     }
 
     @Test
-    public void justTest(){
-        RaftRegister raftRegister=new RaftRegister();
+    public void testServerRegister(){
+        RaftLeader raftLeader=new RaftLeader(new RaftEntryLogUseList());
+        RaftServerContext raftServerContext=new RaftServerContext();
+        raftServerContext.setRaftServer(raftLeader);
+        NettyServerLoop nettyServerLoop = new NettyServerLoop(new ServerChannelInitializer(raftServerContext),22222);
+        nettyServerLoop.startServerLoop();
+
+    }
+
+    @Test
+    public void justTest() {
+        RaftRegister raftRegister = new RaftRegister();
         System.out.println(Integer.toBinaryString(raftRegister.getRegister()));
         raftRegister.setting(5);
         raftRegister.setting(4);

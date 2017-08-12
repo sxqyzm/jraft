@@ -7,6 +7,7 @@ import com.test.zhangmeng.protocol.RaftServerContext;
 import com.test.zhangmeng.server.bootstrap.HostAndPort;
 import com.test.zhangmeng.server.bootstrap.RaftServerBootstrap;
 import com.test.zhangmeng.server.config.RaftServerConfig;
+import com.test.zhangmeng.timeloop.RaftTimerLoop;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -21,14 +22,13 @@ public class RaftTest {
     @Test
     public void loopTest(){
         RaftLeader raftLeader=new RaftLeader(new RaftEntryLogUseList());
-        /*RaftServerContext raftServerContext=new RaftServerContext();
+        RaftServerContext raftServerContext=new RaftServerContext();
         raftServerContext.setRaftServer(raftLeader);
         RaftTimerLoop timeLoop=new RaftTimerLoop(raftServerContext);
         timeLoop.init();
         System.out.println("add"+System.currentTimeMillis());
         while (true){
-        }*/
-        System.out.println(raftLeader.getCommitIndex().getIndex());
+        }
     }
 
 
