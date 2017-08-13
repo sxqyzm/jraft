@@ -57,4 +57,19 @@
         </tag>
     </PipeLine>
 
+    <netty执行结构>
+        (1)new NioEventLoopGroup(num); NioEventLoopGroup代表netty中的NioEventLoop IO线程组，num是IO线程NioEventLoop的数量。
+           NioEventLoopGroup会把需要register的Channel（一般是在connect（）和bind（）方法时首先进行init和register）按照设定的调度规则注册到IO线程组中的其中一个NioEventLoop上(由next()方法返回)，
+            然后就由该IO线程处理该channel的IO操作。
+        (2) 每个IO线程NioEventLoop拥有一个单独的NIO中的Selector。每个IO线程就是不断轮询自己的selector，获取感兴趣的IO事件进行处理。
+        （3）每个IO线程NioEventLoop又是个异步任务处理器（EventExecutor），会不断循环执行添加到其中的task。
+        (4)当IO线程不断轮询自己的selector，获取到某个channel有感兴趣的IO事件发生时时，会执行该channel对应事件的操作（如读事件对应的unsafe.read（）方法）,read方法会把操作交给pipeline，
+        pipeline会从默认的head handler开始，依次执行配置的handler。
+        （5）在开始执行每个handler时，会检查handler对象在初始化时有没有配置所属的executor，默认是没有的，executor就是当前的NioEventLoop（也就是在同一个IO线程顺序执行handler的业务逻辑）。
+            配了的话就会把handler对象对应方法的的执行封装成一个task，交给配置的executor执行。即单独的业务线程池。
+        （6）也可以在handler对象设置一个业务线程池属性，在方法执行体内将执行的逻辑封装成一个task交给设置的业务线程池，这种就是不经过netty，自己控制业务线程池以及业务task的添加逻辑。
+
+        综上所述：netty的执行框架是由n个IO线程和每个handler的业务线程池构成。其中n>=1，业务线程池可以为null，这样的话所有IO业务都会在所属的IO线程中执行。
+    </netty执行结构>
+
 </netty>
