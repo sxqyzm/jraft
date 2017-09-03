@@ -57,6 +57,40 @@
         </tag>
     </PipeLine>
 
+    <ByteBuffer>
+        <tag>
+            原生的byteBuffer有三个属性：position（读写开始位置）、limit（最大的可读/可写字节数量）、capacity（整个byteBuffer分配的容量）。
+                (1)初始化后：position = 0;limit = capacity。此时byteBuffer为空，只能进行写入操作（channel.read(byteBuffer)）。
+                (2)通过channel.read(byteBuffer)向byteBuffer写入数据后，position=写入的字节数目;limit=capacity。此时还不能直接从byteBuffer中
+            读取数据，因为读取和写入数据是操作position到limit直接的空间。这块空间目前还是待写入部分，没有数据。
+               （3）为了读取byteBuffer中写入的数据，首先调用byteBuffer.flip()方法，此时position = 0; limit = 写入的字节数目。此时position到limit的空间就是
+            channel.read(byteBuffer)写入的数据。可以进行读取。
+               （4）读取完后，调用byteBuffer.clear（）方法，此时：position = 0,limit = capacity;也就是回到了步骤（1）状态。可以进行新一轮的读写操作。
+            可见因为jdk中的byteBuffer将读取和写入的操作都统一为对属性position到limit之间存储空间的操作。所以需要在读、写之间进行属性值的切换。
+
+            netty 中的ByteBuf是对于java NIO中的byteBuffer的包装，对byteBuf的使用最终都会转到对其持有的byteBuffer属性上。但是其封装了读写转换的操作
+            简化了读写步骤。
+            netty中的中的ByteBuf有三个属性：readerIndex（数据读取当前位置） 、writerIndex(数据写入当前位置) 、 capacity（容量）。将读取空间和写入空间进行了分开。
+            readerIndex到writerIndex表示可读取的空间段，writerIndex到capacity表示可写入的空间段。不需要再进行读写切换的操作。
+                (1)初始化后readerIndex和writerIndex都为0；headByteBuf持有一个字节数组array；DirectByteBuf则持有一个ByteBuffer。
+                (2)对ByteBuf的读写操作都会最终变成对原生的ByteBuffer的读写上。
+               （3）ByteBuf需要和netty的Channel配合使用，netty的Channel是对java NIO Channel的包装实现，ByteBuf是对JavaNIO 中的ByteBuffer的包装实现，
+            两者配合起来，最终还是通过原生的Channel和byteBuffer进行网络读写操作。
+        </tag>
+
+        <tag>
+            byteBuf对象池
+        </tag>
+
+
+        <tag>
+            byteBuf内存池
+        </tag>
+
+
+
+    </ByteBuffer>
+
     <netty执行结构>
         (1)new NioEventLoopGroup(num); NioEventLoopGroup代表netty中的NioEventLoop IO线程组，num是IO线程NioEventLoop的数量。
            NioEventLoopGroup会把需要register的Channel（一般是在connect（）和bind（）方法时首先进行init和register）按照设定的调度规则注册到IO线程组中的其中一个NioEventLoop上(由next()方法返回)，

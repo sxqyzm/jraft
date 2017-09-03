@@ -12,6 +12,10 @@ import com.test.zhangmeng.server.ServerChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import org.junit.Test;
 
+import java.io.*;
+import java.net.InetAddress;
+import java.net.Socket;
+
 /**
  * Created by hzzhangmeng2 on 2017/1/16.
  */
@@ -40,7 +44,7 @@ public class SeverTest {
     }
 
     @Test
-    public void justTest() {
+    public void justTest() throws IOException {
         RaftRegister raftRegister = new RaftRegister();
         System.out.println(Integer.toBinaryString(raftRegister.getRegister()));
         raftRegister.setting(5);
@@ -51,6 +55,25 @@ public class SeverTest {
         System.out.println(Integer.toBinaryString(raftRegister.getRegister()));
         System.out.println(raftRegister.getStation(4));
         System.out.println(raftRegister.getStation(5));
+
+
+        //客户端
+        //1、创建客户端Socket，指定服务器地址和端口
+        Socket server = new Socket(InetAddress.getLocalHost(), 5678);
+        BufferedReader in = new BufferedReader(new InputStreamReader(
+                server.getInputStream()));
+        PrintWriter out = new PrintWriter(server.getOutputStream());
+        BufferedReader wt = new BufferedReader(new InputStreamReader(System.in));
+        while (true) {
+            String str = wt.readLine();
+            out.println(str);
+            out.flush();
+            if (str.equals("end")) {
+                break;
+            }
+            System.out.println(in.readLine());
+        }
+        server.close();
 
     }
 
