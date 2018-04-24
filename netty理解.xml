@@ -6,7 +6,7 @@
         <tag>
             提供了bind（）和connect（）方法。netty是基于nio的网络框架，实际上是对jdk中nio的包装实现，封闭以及简化了使用NIO的复杂操作。一般使用NIO的步骤如下：
                 1）声明一个selector
-                2）声明一个channel，对于服务端是声明一个ServerSocketChannel，bind到某个端口；对于客户端是声明一个SocketChannel，connect到某个远程地址和端口。
+                2）声明一个channel.对于服务端是声明一个ServerSocketChannel，bind到某个端口；对于客户端是声明一个SocketChannel，connect到某个远程地址和端口。
                 3）将channel注册到selector上，并声明感兴趣的事件。（accept、connect、read、write）
                 4）通过selector的select方法获取到触发事件的channel，进行相应业务操作。
             其中1,2,3步是使用初始化手段，bootStrap中的bind（）和connect（）方法就集成封装了这三步动作。
