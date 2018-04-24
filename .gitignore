@@ -2,4 +2,4 @@
 .gitignore
 .idea/*
 target/
-src/test/java/com/netease/
+src/test/java/com/zhangmeng/
